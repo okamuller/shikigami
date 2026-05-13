@@ -1,0 +1,396 @@
+# 詳細設計 — 式神鑑定
+
+> 本書は「データモデル」「API」「占術エンジン」「プロンプト」の具体仕様を扱う。  
+> 全体構造の判断理由は [architecture.md](./architecture.md) を参照。  
+> 要求仕様は [requirements.md](./requirements.md) を参照。
+
+## 1. データモデル
+
+### 1.1 Supabase Postgres スキーマ（初期案）
+
+```sql
+-- ユーザー
+-- id は Supabase Auth の auth.users.id をそのまま使い、RLS の auth.uid() と一致させる
+create table users (
+  id            uuid primary key references auth.users(id) on delete cascade,
+  apple_user_id text unique not null,   -- 参考保持（auth.users.raw_user_meta_data からも引ける）
+  birth_date    date,
+  gender        text check (gender in ('yin','yang','none')),
+  shikigami_id  smallint,             -- 0〜11
+  created_at    timestamptz default now()
+);
+
+-- 鑑定履歴
+create table fortunes (
+  id          uuid primary key default gen_random_uuid(),
+  user_id     uuid references users(id) on delete cascade,
+  engine      text check (engine in ('seimei','nanboku','palm')),
+  topic       text,                   -- love/work/money/...
+  input_hash  text not null,          -- 入力の SHA256（キャッシュキー）
+  prompt      text,
+  response    text not null,
+  tokens_in   int,
+  tokens_out  int,
+  created_at  timestamptz default now()
+);
+create index on fortunes (user_id, created_at desc);
+create index on fortunes (input_hash);
+
+-- 課金状態（RevenueCat と同期）
+create table subscriptions (
+  user_id     uuid primary key references users(id) on delete cascade,
+  tier        text check (tier in ('free','premium','divine')) default 'free',
+  expires_at  timestamptz,
+  updated_at  timestamptz default now()
+);
+```
+
+### 1.2 Row Level Security（RLS）
+
+全テーブルで RLS を有効化し、最低限以下のポリシーを設定する。
+
+```sql
+alter table users         enable row level security;
+alter table fortunes      enable row level security;
+alter table subscriptions enable row level security;
+
+-- users
+create policy "users_self_read"
+  on users for select using (auth.uid() = id);
+create policy "users_self_write"
+  on users for update using (auth.uid() = id);
+
+-- fortunes
+create policy "fortunes_self"
+  on fortunes for all using (auth.uid() = user_id);
+
+-- subscriptions
+create policy "subscriptions_self_read"
+  on subscriptions for select using (auth.uid() = user_id);
+-- 書き込みは Edge Function (service role) のみ
+```
+
+### 1.3 キャッシュキー
+
+```
+input_hash = SHA256(
+  user_id ||
+  engine  ||
+  birth_date ||
+  topic ||
+  normalize(question) ||      -- trim + 全角半角統一 + 連続空白圧縮
+  history_summary_hash ||     -- 直近 N 件のサマリの SHA256
+  date_jst
+)
+```
+
+ポイント:
+- **`user_id` を必ず含める**。生年月日とトピックだけだと別ユーザーの結果を返してしまうため。
+- **正規化した `question`** を含める。同一トピックでも質問が異なれば別キャッシュ。
+- **`history_summary_hash`** を含める。ENGINE D のパーソナル文脈が変わったらキャッシュも無効。
+- 日付（JST）を含めるため「今日の運勢」は日次で更新。
+- キャッシュ問い合わせ時も `fortunes.user_id = auth.uid()` 句を必須にし、RLS と組み合わせて他人の結果を返さない。
+
+## 2. API 設計（Supabase Edge Functions）
+
+### 2.1 `POST /functions/v1/claude-proxy`
+
+鑑定文生成のメインエンドポイント。
+
+**Request**
+```json
+{
+  "engine": "seimei",
+  "topic": "love",
+  "question": "彼との関係はどうなりますか",
+  "meishiki": {
+    "kan_index": 3,
+    "shi_index": 7,
+    "shikigami_index": 5,
+    "gogyo": "wood",
+    "score": 78
+  }
+}
+```
+
+**Response (200)**
+```json
+{
+  "id": "fortune_xxx",
+  "text": "汝の式神は青龍。木の気が強く...",
+  "cached": false,
+  "tokens": { "input": 320, "output": 180 }
+}
+```
+
+**エラー**
+| HTTP | code | 意味 |
+|---|---|---|
+| 401 | `unauthorized` | JWT 不正 |
+| 402 | `quota_exceeded` | 当日呼び出し上限超過（FREE 5 回） |
+| 429 | `rate_limited` | Anthropic 側のレート制限 |
+| 503 | `claude_unavailable` | フォールバック文を `text` に含む |
+
+### 2.2 `POST /functions/v1/fortune-cache`
+
+`input_hash` を渡してキャッシュヒットを確認する軽量エンドポイント。
+（claude-proxy 内部でも使用するが、フロント側からプリフェッチ用に開放）
+
+### 2.3 `POST /functions/v1/revenuecat-webhook`
+
+RevenueCat からの Webhook を受け、`subscriptions` テーブルを更新する。
+Webhook 検証ヘッダ `Authorization: Bearer <RC_WEBHOOK_KEY>` を必須とする。
+
+## 3. 占術エンジン
+
+### 3.1 ENGINE A — 六壬神課（Swift）
+
+`.claude/B_logic.md` の JS 実装を Swift に移植。**純粋関数として実装**し、テスト容易性を確保。
+
+```swift
+struct Meishiki: Equatable {
+    let kanIndex: Int       // 0..<10
+    let shiIndex: Int       // 0..<12
+    let shikigamiIndex: Int // 0..<12
+    let getsushoIndex: Int  // 0..<12
+    let gogyo: Gogyo
+    let score: Int          // 60..<100
+}
+
+enum Gogyo { case wood, fire, earth, metal, water }
+
+enum SeimeiEngine {
+    static func calc(year: Int, month: Int, day: Int) -> Meishiki {
+        let kan = ((year - 4) % 10 + 10) % 10
+        let shi = ((year - 4) % 12 + 12) % 12
+        let shikigami = ((month + day - 2) % 12 + 12) % 12
+        let getsusho = ((month - 1) % 12 + 12) % 12
+        let gogyoTable: [Gogyo] = [.wood, .wood, .fire, .fire, .earth,
+                                   .earth, .metal, .metal, .water, .water]
+        let score = ((year * 7 + month * 31 + day * 13) % 40) + 60
+        return Meishiki(kanIndex: kan, shiIndex: shi,
+                        shikigamiIndex: shikigami, getsushoIndex: getsusho,
+                        gogyo: gogyoTable[kan], score: score)
+    }
+}
+```
+
+#### 十二天将テーブル
+
+`.claude/B_logic.md` の表をそのまま `static let table = [(name, gogyo, kichi, meaning), ...]` で持つ。
+ローカライズは `Localizable.strings` の `shikigami.0.name` 〜 `shikigami.11.name` で参照。
+
+#### テスト観点
+
+- 既知の生年月日（例: 1990-05-15）→ 固定値
+- 月日境界（1/1, 12/31, うるう年 2/29）
+- スコアは 60〜99 の範囲（プロパティテスト）
+
+### 3.2 ENGINE B — 観相エンジン（顔）
+
+要求トレース: `FR-EN-02`（Slider）/ `FR-EN-02b`（Vision）
+
+| バリアント | ロールアウト | 入力 | 出力 |
+|---|---|---|---|
+| ENGINE B Slider | Phase 2 | 6 パーツのスライダー値（0〜100） | 重み付け合計 + テンプレ ID |
+| ENGINE B Vision | Phase 3 | カメラ画像 | Vision Framework 68 点 → 距離比 → スコア |
+
+**Slider 版のスコア合成（参考）**
+```
+total = 0.20 * eyebrow + 0.20 * eye + 0.18 * nose
+      + 0.16 * mouth   + 0.14 * ear + 0.12 * chin
+```
+
+**Vision 版の実装メモ**
+- `VNDetectFaceLandmarksRequest` を使用
+- 解析は `Engines/PhysiognomyAnalyzer.swift` に閉じ込め、`UIImage` を引数に取らず正規化済みポイント配列を受ける（テスト性のため）
+- 画像はメモリ上のみ。ファイル保存・ネットワーク送信は禁止（`NFR-PR-01`）
+
+### 3.3 ENGINE C — Claude API（クライアント側）
+
+`ClaudeClient` プロトコルで抽象化。テスト時はスタブ注入。
+
+```swift
+protocol ClaudeClient {
+    func generate(request: FortuneRequest) async throws -> FortuneResponse
+}
+```
+
+実装は `SupabaseClaudeClient` が `claude-proxy` Edge Function を呼ぶだけ。
+リトライ（指数バックオフ 1/2/4/8 秒・最大 4 回）は実装側で行う。
+
+### 3.4 ENGINE D — パーソナル記憶層
+
+```
+recent_summaries = fortunes
+                     .filter(user_id = current)
+                     .order_by(created_at desc)
+                     .limit(5)
+                     .map { "\(topic): \(first 40 chars)" }
+                     .join("\n")
+```
+
+これを Claude プロンプトの `<history>` セクションに注入する。
+
+### 3.5 ENGINE B-Palm — 手相エンジン
+
+要求トレース: `FR-EN-03`（Phase 3 / Divine プラン・¥480 都度課金）
+
+観相（顔）の ENGINE B とは **別エンジン**として実装する。共通点は Vision Framework を使うことだけで、ランドマーク種別・スコア構築・出力スキーマがすべて異なる。
+
+#### 解析対象（5 線）
+
+| 線 | 意味 | 主なスコア軸 |
+|---|---|---|
+| 生命線 | 健康・体力 | 長さ・深さ・分岐数 |
+| 感情線 | 恋愛・対人 | 終点位置・曲率・乱れ |
+| 頭脳線 | 知性・判断 | 長さ・傾き・直進性 |
+| 運命線 | 仕事・社会運 | 起点・連続性・補助線 |
+| 財運線 | 金運 | 本数・濃さ・終点 |
+
+#### パイプライン
+
+```
+カメラ画像（手のひら）
+  │
+  ▼
+VNDetectHumanHandPoseRequest（手の 21 キーポイント）でフレーミング
+  │
+  ▼
+Vision の VNDetectContoursRequest で皮膚紋を抽出
+  │
+  ▼
+独自スコア関数（line_id ごとの形状特徴量を 0〜100 に正規化）
+  │
+  ▼
+PalmScore { life, emotion, intellect, fate, wealth }（各 0〜100）
+  │
+  ▼
+ENGINE C（南北プロンプト + PalmScore）→ 鑑定文
+```
+
+#### Swift インターフェース
+
+```swift
+struct PalmScore: Equatable {
+    let life:      Int  // 0..<100
+    let emotion:   Int
+    let intellect: Int
+    let fate:      Int
+    let wealth:    Int
+}
+
+protocol PalmAnalyzer {
+    func analyze(handImage: CIImage) async throws -> PalmScore
+}
+```
+
+#### データモデル
+
+`design.md §1.1` の `fortunes.engine` に既に `'palm'` を含めているため、テーブル変更は不要。
+`fortunes.prompt` には PalmScore の JSON を格納する。
+
+#### 実装上の注意
+
+- 端末上で完結（`NFR-PR-01`）。画像は解析後即破棄
+- 撮影ガイド枠と最低輝度判定を UI 側で実装（`operations.md §5` のトラブルシュート参照）
+- Phase 3 着手前に占術監修者によるスコア基準のレビューを通す
+
+#### テスト観点
+
+- 既知のサンプル画像セットに対するスコアの再現性（許容誤差 ±5）
+- 暗所・低解像度・指の欠損などのエラーケースで `PalmAnalysisError` を返す
+
+## 4. プロンプト設計
+
+### 4.1 共通テンプレ
+
+```
+<system>
+{ROLE}                    -- 晴明 / 南北 の人格定義
+{TONE_RULES}              -- 口調ルール（文語 / 江戸口語）
+{LENGTH_LIMIT: 200文字}
+</system>
+
+<user>
+<profile>
+生年月日: {YYYY-MM-DD}
+干支: {十干}{十二支}
+式神: {名称}
+五行: {木火土金水}
+スコア: {0-100}
+</profile>
+<topic>{love/work/money/health/family/destiny}</topic>
+<question>{自由テキスト・80 字以内}</question>
+<history>{過去 N 件のサマリ}</history>
+</user>
+```
+
+### 4.2 役割定義（晴明）
+
+```
+あなたは平安時代の陰陽師・安倍晴明である。
+- 文語体（〜なり、〜べし、〜おろう、汝、式神）を用いる
+- 神秘的で詩的、簡潔
+- 200 文字以内・段落 2 つ（運命の告知 / 行動の教え）
+- 占いの言葉として断定表現「必ず」「絶対」は禁止
+```
+
+### 4.3 役割定義（南北）
+
+```
+あなたは江戸後期の観相家・水野南北である。
+- 江戸口語（〜じゃ、〜なるぞ、〜であろう）を用いる
+- 人相・食・節制の教えを織り込む
+- 厳しくも温かみのある口調
+- 200 文字以内・段落 2 つ
+- 医療・健康効果の断定表現は禁止
+```
+
+### 4.4 Prompt Caching
+
+- システムプロンプト（役割定義 + 口調ルール）の末尾に `cache_control: { type: "ephemeral" }` を付与
+- Anthropic のキャッシュ TTL は **`ephemeral`（既定 5 分）または extended の 1 時間** が上限。同時アクセス時の連続呼び出しに対して入力トークンを安く抑える用途
+- 「同一ユーザー / 同一日付の鑑定を返す」長期キャッシュは Anthropic ではなく **Supabase 上の `fortunes.input_hash` ルックアップ**で実現する（[§1.3](#13-キャッシュキー)）
+- 1 鑑定あたりコスト試算は `.claude/B_logic.md` の表を参照
+
+### 4.5 モデル選択
+
+モデル ID は **ハードコードせず**、Edge Function の環境変数（`CLAUDE_MODEL_DEFAULT` / `CLAUDE_MODEL_PREMIUM` / `CLAUDE_MODEL_LIGHT`）で差し替え可能にする。
+本番では **date-suffixed のスナップショット ID**（例: `claude-xxx-YYYYMMDD` 形式）を固定し、`-latest` 系の暗黙アップデートを避ける。
+最新のモデル ID 一覧は [Anthropic 公式ドキュメント](https://docs.anthropic.com/en/docs/about-claude/models) を参照。
+
+| 用途 | モデルファミリ | 理由 |
+|---|---|---|
+| 通常鑑定 | Sonnet（最新世代） | 品質 / コストのバランス |
+| Divine 詳細鑑定 | Opus（最新世代） | 文章の深さを優先 |
+| 毎朝のひとこと | Haiku（最新世代） | 大量・短文・低コスト |
+
+モデルを切り替える際は:
+1. ステージング環境で同一プロンプトに対する応答を比較レビュー
+2. ベンチマーク（応答時間 / トークン消費 / 文語精度）を `testing.md §8` のフォーマットで記録
+3. Edge Function の環境変数を更新してロールアウト
+
+## 5. エラー処理 / フォールバック
+
+| 状態 | 表示 | 内部処理 |
+|---|---|---|
+| 通常 | Claude 生成文 | キャッシュ → 生成 → 保存 |
+| API 障害 | テンプレ文 + 「式神の声が今しばし届かぬ」 | Edge Function でテンプレートを選択して返す |
+| オフライン | ENGINE A の式神のみ表示 | 端末キャッシュから表示・後で再試行 |
+| 上限超過 | ペイウォール訴求 | 402 を返し UI で課金導線 |
+
+## 6. ユースケースから設計へのトレース
+
+| ユースケース | 要求 ID | 関連設計 |
+|---|---|---|
+| UC-1 新規鑑定 | FR-FT-01, FR-EN-01 | §2.1 claude-proxy / §3.1 SeimeiEngine / §4.2 晴明プロンプト |
+| UC-2 詳細鑑定購入 | FR-PY-01, FR-PY-04, FR-PY-06 | §2.3 revenuecat-webhook / §1.1 subscriptions テーブル |
+| UC-3 手相 AI | FR-EN-03 | §3.5 ENGINE B-Palm / §4.3 南北プロンプト |
+| UC-4 API 障害 | NFR-OF-01 | §5 フォールバック |
+
+## 7. 関連ドキュメント
+
+- アーキテクチャ判断: [architecture.md](./architecture.md)
+- セキュリティ要件: [security.md](./security.md)
+- テスト方針: [testing.md](./testing.md)
