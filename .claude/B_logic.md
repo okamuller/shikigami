@@ -53,6 +53,9 @@ function calcMeishiki(birthDate) {
   // 式神 = (月 + 日 - 2) mod 12
   const shikigamiIdx = ((month + day - 2) % 12 + 12) % 12;
 
+  // 月将 = (月 - 1) mod 12
+  const getsushoIdx = ((month - 1) % 12 + 12) % 12;
+
   // 五行マップ（十干→五行）
   const gogyoMap = ["木","木","火","火","土","土","金","金","水","水"];
   const gogyo = gogyoMap[kanIdx];
@@ -60,7 +63,7 @@ function calcMeishiki(birthDate) {
   // 運気スコア（0〜100）
   const score = ((year * 7 + month * 31 + day * 13) % 40) + 60;
 
-  return { kan, shi, shikigami, getsusho, gogyo, score };
+  return { kanIdx, shiIdx, shikigamiIdx, getsushoIdx, gogyo, score };
 }
 ```
 

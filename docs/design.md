@@ -284,11 +284,20 @@ recent_summaries = fortunes
 
 ### 4.5 モデル選択
 
-| 用途 | モデル | 理由 |
+モデル ID は **ハードコードせず**、Edge Function の環境変数（`CLAUDE_MODEL_DEFAULT` / `CLAUDE_MODEL_PREMIUM` / `CLAUDE_MODEL_LIGHT`）で差し替え可能にする。
+本番では **date-suffixed のスナップショット ID**（例: `claude-xxx-YYYYMMDD` 形式）を固定し、`-latest` 系の暗黙アップデートを避ける。
+最新のモデル ID 一覧は [Anthropic 公式ドキュメント](https://docs.anthropic.com/en/docs/about-claude/models) を参照。
+
+| 用途 | モデルファミリ | 理由 |
 |---|---|---|
-| 通常鑑定 | `claude-sonnet-4-6` | 品質 / コストバランス |
-| Divine 詳細鑑定 | `claude-opus-4-7` | 文章の深さを優先 |
-| 毎朝のひとこと | `claude-haiku-4-5` | 大量・短文・低コスト |
+| 通常鑑定 | Sonnet（最新世代） | 品質 / コストのバランス |
+| Divine 詳細鑑定 | Opus（最新世代） | 文章の深さを優先 |
+| 毎朝のひとこと | Haiku（最新世代） | 大量・短文・低コスト |
+
+モデルを切り替える際は:
+1. ステージング環境で同一プロンプトに対する応答を比較レビュー
+2. ベンチマーク（応答時間 / トークン消費 / 文語精度）を `testing.md §8` のフォーマットで記録
+3. Edge Function の環境変数を更新してロールアウト
 
 ## 5. エラー処理 / フォールバック
 
