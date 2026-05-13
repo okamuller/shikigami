@@ -10,9 +10,10 @@
 
 ```sql
 -- ユーザー
+-- id は Supabase Auth の auth.users.id をそのまま使い、RLS の auth.uid() と一致させる
 create table users (
-  id            uuid primary key default gen_random_uuid(),
-  apple_user_id text unique not null,
+  id            uuid primary key references auth.users(id) on delete cascade,
+  apple_user_id text unique not null,   -- 参考保持（auth.users.raw_user_meta_data からも引ける）
   birth_date    date,
   gender        text check (gender in ('yin','yang','none')),
   shikigami_id  smallint,             -- 0〜11
@@ -72,11 +73,23 @@ create policy "subscriptions_self_read"
 ### 1.3 キャッシュキー
 
 ```
-input_hash = SHA256(engine || birth_date || topic || date_jst)
+input_hash = SHA256(
+  user_id ||
+  engine  ||
+  birth_date ||
+  topic ||
+  normalize(question) ||      -- trim + 全角半角統一 + 連続空白圧縮
+  history_summary_hash ||     -- 直近 N 件のサマリの SHA256
+  date_jst
+)
 ```
 
-- 同一ユーザーが同日に同じ悩みカテゴリで鑑定 → キャッシュヒット
-- 日付（JST）を含めるため「今日の運勢」は日次で更新
+ポイント:
+- **`user_id` を必ず含める**。生年月日とトピックだけだと別ユーザーの結果を返してしまうため。
+- **正規化した `question`** を含める。同一トピックでも質問が異なれば別キャッシュ。
+- **`history_summary_hash`** を含める。ENGINE D のパーソナル文脈が変わったらキャッシュも無効。
+- 日付（JST）を含めるため「今日の運勢」は日次で更新。
+- キャッシュ問い合わせ時も `fortunes.user_id = auth.uid()` 句を必須にし、RLS と組み合わせて他人の結果を返さない。
 
 ## 2. API 設計（Supabase Edge Functions）
 
@@ -265,7 +278,8 @@ recent_summaries = fortunes
 ### 4.4 Prompt Caching
 
 - システムプロンプト（役割定義 + 口調ルール）の末尾に `cache_control: { type: "ephemeral" }` を付与
-- 24 時間のキャッシュヒットで入力トークン費用を約 90% 削減
+- Anthropic のキャッシュ TTL は **`ephemeral`（既定 5 分）または extended の 1 時間** が上限。同時アクセス時の連続呼び出しに対して入力トークンを安く抑える用途
+- 「同一ユーザー / 同一日付の鑑定を返す」長期キャッシュは Anthropic ではなく **Supabase 上の `fortunes.input_hash` ルックアップ**で実現する（[§1.3](#13-キャッシュキー)）
 - 1 鑑定あたりコスト試算は `.claude/B_logic.md` の表を参照
 
 ### 4.5 モデル選択

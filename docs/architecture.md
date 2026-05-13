@@ -114,10 +114,14 @@
 
 | キャッシュ | 場所 | TTL | キー |
 |---|---|---|---|
-| 鑑定文 | Supabase Postgres | 24 時間 | `SHA256(engine, birth_date, topic, date_jst)` |
-| Claude プロンプト | Anthropic Prompt Caching | 24 時間 | システムプロンプトに `cache_control` 付与 |
+| 鑑定文（DB レベル） | Supabase Postgres | 24 時間 | `SHA256(user_id, engine, birth_date, topic, normalize(question), history_hash, date_jst)`（[design.md §1.3](./design.md#13-キャッシュキー)） |
+| Claude プロンプト | Anthropic Prompt Caching | ephemeral 5 分（既定）/ extended 1 時間 | システムプロンプトに `cache_control` を付与。**長時間の永続キャッシュは DB レベルで担保する** |
 | ユーザー命式 | iOS UserDefaults | 永続（生年月日変更時に無効化） | `user_id` |
 | サブスク状態 | RevenueCat | アプリ起動時更新 | `apple_user_id` |
+
+> Anthropic の Prompt Caching は短命（既定 5 分・延長で 1 時間）であり、24 時間以上のヒットは期待できない。  
+> 同一ユーザーの「今日の運勢」のような長期キャッシュは Supabase 上の `fortunes.input_hash` ルックアップで実現する。  
+> コスト試算（1 鑑定 1 円未満）は DB キャッシュヒット率を主因として見積もる。
 
 ## 8. 課金フロー
 

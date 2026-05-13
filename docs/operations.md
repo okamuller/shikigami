@@ -127,7 +127,7 @@ jobs:
 ## 6. コストガード
 
 - 1 ユーザー / 1 日あたり Claude 呼び出し上限: 無料 5 / Premium 50 / Divine 無制限
-- Edge Function で `users.tier` をチェックして 402 を返す
+- Edge Function で `subscriptions.tier`（`auth.uid()` で絞り込み）をチェックして 402 を返す
 - Anthropic Console の Usage を週次で確認、月 ¥30,000 を超えそうならアラート
 
 ## 7. 関連ドキュメント
