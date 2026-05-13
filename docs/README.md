@@ -29,6 +29,9 @@ mockups/  →  「どう見えるか（インタラクティブモック）」
 新しい仕様や設計の意思決定は `.claude/` 側を更新し、
 実装手順や運用ルールの変更は `docs/` 側を更新すること。
 
+> 注: `mockups/*.jsx` と `docs/business_plan.docx` は本リポジトリにはまだ含まれていない。
+> `scripts/push_shikigami_full.py` 経由で別途追加される予定。docs 側のリンクは追加後に有効化される。
+
 ## 読む順序
 
 ### 新規参加エンジニア
