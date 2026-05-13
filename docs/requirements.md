@@ -49,12 +49,15 @@
 
 ### 3.3 占術エンジン
 
-| ID | 要求 | 優先度 | 備考 |
-|---|---|---|---|
-| FR-EN-01 | 六壬神課で式神（十二天将）・干支・五行・スコアを算出 | MUST | ENGINE A |
-| FR-EN-02 | 観相エンジン（Phase 1）でスライダー入力から所見を生成 | SHOULD | ENGINE B Phase 1 |
-| FR-EN-03 | 手相 AI カメラで 5 線（生命・感情・頭脳・運命・財運）をスコア化 | COULD | Phase 3 |
-| FR-EN-04 | 履歴を踏まえたパーソナル鑑定文を生成 | SHOULD | ENGINE D |
+> 凡例: 「ロールアウト Phase」はリリース計画上のフェーズ（[roadmap.md](./roadmap.md)）。エンジンの実装バリアントは「ENGINE 名」で表記する。
+
+| ID | 要求 | 優先度 | エンジン実装 | ロールアウト Phase |
+|---|---|---|---|---|
+| FR-EN-01 | 六壬神課で式神（十二天将）・干支・五行・スコアを算出 | MUST | ENGINE A | Phase 1 |
+| FR-EN-02 | 観相エンジンでスライダー入力から所見を生成 | SHOULD | ENGINE B Slider | Phase 2 |
+| FR-EN-02b | 観相エンジンで Vision Framework により所見を生成 | COULD | ENGINE B Vision | Phase 3 |
+| FR-EN-03 | 手相 AI カメラで 5 線（生命・感情・頭脳・運命・財運）をスコア化 | COULD | ENGINE B-Palm | Phase 3 |
+| FR-EN-04 | 履歴を踏まえたパーソナル鑑定文を生成 | SHOULD | ENGINE D | Phase 2 |
 
 ### 3.4 課金
 

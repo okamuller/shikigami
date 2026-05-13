@@ -186,22 +186,25 @@ enum SeimeiEngine {
 - 月日境界（1/1, 12/31, うるう年 2/29）
 - スコアは 60〜99 の範囲（プロパティテスト）
 
-### 3.2 ENGINE B — 観相エンジン
+### 3.2 ENGINE B — 観相エンジン（顔）
 
-| Phase | 入力 | 出力 |
-|---|---|---|
-| 1 | 6 パーツのスライダー値（0〜100） | 重み付け合計 + テンプレ ID |
-| 2 | カメラ画像 | Vision Framework 68 点 → 距離比 → スコア |
+要求トレース: `FR-EN-02`（Slider）/ `FR-EN-02b`（Vision）
 
-**Phase 1 のスコア合成（参考）**
+| バリアント | ロールアウト | 入力 | 出力 |
+|---|---|---|---|
+| ENGINE B Slider | Phase 2 | 6 パーツのスライダー値（0〜100） | 重み付け合計 + テンプレ ID |
+| ENGINE B Vision | Phase 3 | カメラ画像 | Vision Framework 68 点 → 距離比 → スコア |
+
+**Slider 版のスコア合成（参考）**
 ```
 total = 0.20 * eyebrow + 0.20 * eye + 0.18 * nose
       + 0.16 * mouth   + 0.14 * ear + 0.12 * chin
 ```
 
-**Phase 2 の実装メモ**
+**Vision 版の実装メモ**
 - `VNDetectFaceLandmarksRequest` を使用
 - 解析は `Engines/PhysiognomyAnalyzer.swift` に閉じ込め、`UIImage` を引数に取らず正規化済みポイント配列を受ける（テスト性のため）
+- 画像はメモリ上のみ。ファイル保存・ネットワーク送信は禁止（`NFR-PR-01`）
 
 ### 3.3 ENGINE C — Claude API（クライアント側）
 
@@ -228,6 +231,75 @@ recent_summaries = fortunes
 ```
 
 これを Claude プロンプトの `<history>` セクションに注入する。
+
+### 3.5 ENGINE B-Palm — 手相エンジン
+
+要求トレース: `FR-EN-03`（Phase 3 / Divine プラン・¥480 都度課金）
+
+観相（顔）の ENGINE B とは **別エンジン**として実装する。共通点は Vision Framework を使うことだけで、ランドマーク種別・スコア構築・出力スキーマがすべて異なる。
+
+#### 解析対象（5 線）
+
+| 線 | 意味 | 主なスコア軸 |
+|---|---|---|
+| 生命線 | 健康・体力 | 長さ・深さ・分岐数 |
+| 感情線 | 恋愛・対人 | 終点位置・曲率・乱れ |
+| 頭脳線 | 知性・判断 | 長さ・傾き・直進性 |
+| 運命線 | 仕事・社会運 | 起点・連続性・補助線 |
+| 財運線 | 金運 | 本数・濃さ・終点 |
+
+#### パイプライン
+
+```
+カメラ画像（手のひら）
+  │
+  ▼
+VNDetectHumanHandPoseRequest（手の 21 キーポイント）でフレーミング
+  │
+  ▼
+Vision の VNDetectContoursRequest で皮膚紋を抽出
+  │
+  ▼
+独自スコア関数（line_id ごとの形状特徴量を 0〜100 に正規化）
+  │
+  ▼
+PalmScore { life, emotion, intellect, fate, wealth }（各 0〜100）
+  │
+  ▼
+ENGINE C（南北プロンプト + PalmScore）→ 鑑定文
+```
+
+#### Swift インターフェース
+
+```swift
+struct PalmScore: Equatable {
+    let life:      Int  // 0..<100
+    let emotion:   Int
+    let intellect: Int
+    let fate:      Int
+    let wealth:    Int
+}
+
+protocol PalmAnalyzer {
+    func analyze(handImage: CIImage) async throws -> PalmScore
+}
+```
+
+#### データモデル
+
+`design.md §1.1` の `fortunes.engine` に既に `'palm'` を含めているため、テーブル変更は不要。
+`fortunes.prompt` には PalmScore の JSON を格納する。
+
+#### 実装上の注意
+
+- 端末上で完結（`NFR-PR-01`）。画像は解析後即破棄
+- 撮影ガイド枠と最低輝度判定を UI 側で実装（`operations.md §5` のトラブルシュート参照）
+- Phase 3 着手前に占術監修者によるスコア基準のレビューを通す
+
+#### テスト観点
+
+- 既知のサンプル画像セットに対するスコアの再現性（許容誤差 ±5）
+- 暗所・低解像度・指の欠損などのエラーケースで `PalmAnalysisError` を返す
 
 ## 4. プロンプト設計
 
@@ -310,12 +382,12 @@ recent_summaries = fortunes
 
 ## 6. ユースケースから設計へのトレース
 
-| ユースケース | 関連設計 |
-|---|---|
-| UC-1 新規鑑定 | 2.1 claude-proxy / 3.1 SeimeiEngine / 4.2 晴明プロンプト |
-| UC-2 詳細鑑定購入 | 2.3 revenuecat-webhook / 1.1 subscriptions テーブル |
-| UC-3 手相 AI | 3.2 ENGINE B Phase 2 / 4.3 南北プロンプト |
-| UC-4 API 障害 | 5. フォールバック |
+| ユースケース | 要求 ID | 関連設計 |
+|---|---|---|
+| UC-1 新規鑑定 | FR-FT-01, FR-EN-01 | §2.1 claude-proxy / §3.1 SeimeiEngine / §4.2 晴明プロンプト |
+| UC-2 詳細鑑定購入 | FR-PY-01, FR-PY-04, FR-PY-06 | §2.3 revenuecat-webhook / §1.1 subscriptions テーブル |
+| UC-3 手相 AI | FR-EN-03 | §3.5 ENGINE B-Palm / §4.3 南北プロンプト |
+| UC-4 API 障害 | NFR-OF-01 | §5 フォールバック |
 
 ## 7. 関連ドキュメント
 
