@@ -1,0 +1,38 @@
+name: Backend CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deno-test:
+    name: Deno Edge Function Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+
+      - name: Test Edge Functions
+        run: |
+          deno test \
+            --allow-env \
+            --allow-net \
+            backend/supabase/functions/
+        env:
+          SUPABASE_URL: http://localhost:54321
+          SUPABASE_ANON_KEY: placeholder
+          SUPABASE_SERVICE_ROLE_KEY: placeholder
+          ANTHROPIC_API_KEY: placeholder
+          CLAUDE_MODEL_DEFAULT: claude-sonnet-4-6
+          CLAUDE_MODEL_PREMIUM: claude-opus-4-7
+          CLAUDE_MODEL_LIGHT: claude-haiku-4-5-20251001
+          REVENUECAT_WEBHOOK_AUTH: placeholder
