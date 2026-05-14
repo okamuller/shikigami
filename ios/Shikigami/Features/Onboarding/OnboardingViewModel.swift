@@ -21,9 +21,11 @@ final class OnboardingViewModel {
     var error: String?
 
     private let userRepo: UserRepository
+    private let authClient: SupabaseAuthClient
 
-    init(userRepo: UserRepository) {
+    init(userRepo: UserRepository, authClient: SupabaseAuthClient) {
         self.userRepo = userRepo
+        self.authClient = authClient
     }
 
     func advance() {
@@ -46,8 +48,15 @@ final class OnboardingViewModel {
         calculateMeishiki()
         guard let m = meishiki else { return nil }
 
-        var user = AppUser(
-            id: UUID(),
+        // Supabase Auth セッションの userId を使用（RLS: auth.uid() = id が必須）
+        guard let sessionUserId = authClient.currentSession?.userId,
+              let userId = UUID(uuidString: sessionUserId) else {
+            error = NSLocalizedString("error.unauthorized", comment: "")
+            return nil
+        }
+
+        let user = AppUser(
+            id: userId,
             birthDate: birthDate,
             gender: gender,
             shikigamiId: m.shikigamiIndex

@@ -34,7 +34,35 @@ final class SupabaseFortuneRepository: FortuneRepository, Sendable {
         let decoder = JSONDecoder()
         decoder.keyDecodingStrategy = .convertFromSnakeCase
         decoder.dateDecodingStrategy = .iso8601
-        return try decoder.decode([Fortune].self, from: data)
+        // DB の `response` カラムを Fortune.text にマップするため専用 DTO を使用
+        let dtos = try decoder.decode([FortuneHistoryDTO].self, from: data)
+        return dtos.map(\.fortune)
+    }
+}
+
+// DB の history クエリ結果 (response カラム) を Fortune に変換する DTO
+private struct FortuneHistoryDTO: Decodable {
+    let id: UUID
+    let response: String
+    let topic: Topic
+    let createdAt: Date
+
+    enum CodingKeys: String, CodingKey {
+        case id, response, topic
+        case createdAt = "created_at"
+    }
+
+    var fortune: Fortune {
+        Fortune(
+            id: id,
+            text: response,
+            cached: false,
+            isFallback: false,
+            tokensIn: 0,
+            tokensOut: 0,
+            createdAt: createdAt,
+            topic: topic
+        )
     }
 }
 

@@ -9,7 +9,7 @@ struct OnboardingFlow: View {
     init(deps: AppDependencies, onComplete: @escaping (AppUser) -> Void) {
         self.deps = deps
         self.onComplete = onComplete
-        _vm = State(initialValue: OnboardingViewModel(userRepo: deps.userRepo))
+        _vm = State(initialValue: OnboardingViewModel(userRepo: deps.userRepo, authClient: deps.authClient))
     }
 
     var body: some View {

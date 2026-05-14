@@ -60,6 +60,18 @@ final class FortuneViewModel {
 
         } catch FortuneError.quotaExceeded {
             showPaywall = true
+        } catch FortuneError.claudeUnavailable(let fallbackText) {
+            // API 障害時はフォールバック文を fortune として表示する（NFR-OF-01）
+            fortune = Fortune(
+                id: UUID(),
+                text: fallbackText,
+                cached: false,
+                isFallback: true,
+                tokensIn: 0,
+                tokensOut: 0,
+                createdAt: .now,
+                topic: selectedTopic
+            )
         } catch let e as FortuneError {
             error = e
         } catch {
