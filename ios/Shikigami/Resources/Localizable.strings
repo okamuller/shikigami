@@ -1,0 +1,105 @@
+/* 式神鑑定 ローカライズ文字列 */
+
+// MARK: - App
+"app.name" = "式神鑑定";
+
+// MARK: - タブ
+"tab.home" = "鑑定";
+
+// MARK: - ウェルカム
+"welcome.subtitle" = "安倍晴明が、汝の天命を解き明かさん";
+"welcome.cta" = "式神と出会う";
+
+// MARK: - オンボーディング共通
+"onboarding.next" = "次へ";
+
+// MARK: - 生年月日
+"onboarding.birthdate.title" = "生年月日を教えよ";
+"onboarding.birthdate.subtitle" = "式神の算出に必要なり";
+
+// MARK: - 性別
+"onboarding.gender.title" = "汝の気を選ばれよ";
+"gender.yin" = "陰（女）";
+"gender.yang" = "陽（男）";
+"gender.none" = "回答しない";
+
+// MARK: - 悩みカテゴリ
+"onboarding.topic.title" = "悩みの種は何か";
+"onboarding.topic.subtitle" = "最も気になることを選ばれよ";
+"topic.love" = "恋愛・縁";
+"topic.work" = "仕事・出世";
+"topic.money" = "金運・財";
+"topic.health" = "健康・体";
+"topic.family" = "家庭・縁";
+"topic.destiny" = "運命・天命";
+
+// MARK: - 式神解明
+"reveal.calculating" = "汝の命式を算出しておる...";
+"reveal.yourShikigami" = "汝の式神";
+"reveal.kanshi" = "干支";
+"reveal.gogyo" = "五行";
+"reveal.kichi" = "吉凶";
+"reveal.cta" = "式神よ、宿れ";
+
+// MARK: - ホーム
+"home.todayFortune" = "今日の天命";
+"home.noFortune" = "まだ鑑定を受けておらぬ";
+"home.startFortune" = "鑑定する";
+"home.recentHistory" = "最近の鑑定";
+
+// MARK: - キャラクター
+"character.seimei.name" = "安倍晴明";
+"character.seimei.title" = "平安の陰陽師";
+
+// MARK: - 鑑定入力
+"fortune.input.title" = "鑑定";
+"fortune.input.topicLabel" = "悩みの種";
+"fortune.input.questionLabel" = "質問（80字以内）";
+"fortune.input.cta" = "式神を放つ";
+
+// MARK: - 鑑定結果
+"fortune.result.fallback" = "式神の声が今しばし届かぬ";
+
+// MARK: - ペイウォールティーザー
+"paywall.teaser.cta" = "天命の続きを見る";
+"paywall.teaser.preview" = "あの人はあなたのことを...";
+"paywall.blurred.placeholder" = "式神の言葉、まだ続くなり。天命の詳細、汝に伝えるべきことがある...";
+"paywall.headline" = "天命の全てを\n解き明かさん";
+"paywall.cta" = "天命の続きを見る";
+"paywall.trial" = "2週間無料でお試し";
+
+// MARK: - プラン選択
+"plan.title" = "プランを選ぶ";
+"plan.monthly.label" = "月額プラン";
+"plan.annual.label" = "年額プラン";
+"plan.cta" = "契約を結ぶ";
+"plan.restore" = "購入を復元する";
+"plan.legal" = "購入はいつでも解約できます。Apple IDの設定からサブスクリプションを管理できます。利用規約・プライバシーポリシーは設定画面よりご確認ください。";
+
+// MARK: - 契約完了
+"paywall.completion.title" = "契約成立";
+"paywall.completion.subtitle" = "式神との縁が結ばれた。\n天命の全てを解き明かさん。";
+"paywall.completion.feature1" = "鑑定回数 無制限（月50回）";
+"paywall.completion.feature2" = "全カテゴリ詳細鑑定";
+"paywall.completion.feature3" = "鑑定履歴 無制限保存";
+"paywall.completion.cta" = "式神よ、導け";
+
+// MARK: - エラー
+"error.quota_exceeded" = "本日の鑑定回数の上限に達した。明日また参られよ。";
+"error.rate_limited" = "式神の声が混み合っておる。しばし待たれよ。";
+"error.claude_unavailable" = "式神の声が今しばし届かぬ。";
+"error.unauthorized" = "認証の御印が確認できぬ。再度お試しあれ。";
+
+// MARK: - 式神名（十二天将）
+"shikigami.0.name" = "貴人";
+"shikigami.1.name" = "騰蛇";
+"shikigami.2.name" = "朱雀";
+"shikigami.3.name" = "六合";
+"shikigami.4.name" = "勾陳";
+"shikigami.5.name" = "青龍";
+"shikigami.6.name" = "天空";
+"shikigami.7.name" = "白虎";
+"shikigami.8.name" = "太常";
+"shikigami.9.name" = "玄武";
+"shikigami.10.name" = "太陰";
+"shikigami.11.name" = "天后";

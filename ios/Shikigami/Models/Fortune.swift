@@ -1,0 +1,64 @@
+import SwiftUI
+
+struct Fortune: Identifiable, Codable {
+    let id: UUID
+    let text: String
+    let cached: Bool
+    let isFallback: Bool
+    let tokensIn: Int
+    let tokensOut: Int
+    let createdAt: Date
+    let topic: Topic
+
+    enum CodingKeys: String, CodingKey {
+        case id, text, cached, topic
+        case isFallback  = "is_fallback"
+        case tokensIn    = "tokens_in"
+        case tokensOut   = "tokens_out"
+        case createdAt   = "created_at"
+    }
+}
+
+enum Topic: String, CaseIterable, Codable, Identifiable {
+    case love    = "love"
+    case work    = "work"
+    case money   = "money"
+    case health  = "health"
+    case family  = "family"
+    case destiny = "destiny"
+
+    var id: String { rawValue }
+
+    var labelJa: String {
+        switch self {
+        case .love:    return NSLocalizedString("topic.love", comment: "")
+        case .work:    return NSLocalizedString("topic.work", comment: "")
+        case .money:   return NSLocalizedString("topic.money", comment: "")
+        case .health:  return NSLocalizedString("topic.health", comment: "")
+        case .family:  return NSLocalizedString("topic.family", comment: "")
+        case .destiny: return NSLocalizedString("topic.destiny", comment: "")
+        }
+    }
+
+    var icon: String {
+        switch self {
+        case .love:    return "♡"
+        case .work:    return "⚔"
+        case .money:   return "◎"
+        case .health:  return "✦"
+        case .family:  return "⬡"
+        case .destiny: return "☿"
+        }
+    }
+
+    var accentColor: Color {
+        switch self {
+        case .love:    return .crimsonRed
+        case .work:    return .oracleGold
+        case .money:   return .jadeGreen
+        case .health:  return Color(hex: "#3A7BD5")
+        case .family:  return .fujiPurple
+        case .destiny: return Color(hex: "#888888")
+        }
+    }
+}
