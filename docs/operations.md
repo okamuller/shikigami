@@ -5,29 +5,32 @@
 
 ## 1. CI / CD
 
-### 1.1 `.github/workflows/ios.yml`（雛形）
+### 1.1 `.github/workflows/ci.yml`
+
+PR 作成・更新時、`main` への push 時、または GitHub Actions の手動実行（`workflow_dispatch`）で Swift Package のユニットテストを実行する。
+現行リポジトリは Swift Package として `Engines` / `EnginesTests` を持つため、CI では Linux 上の Swift 5.9 コンテナで `swift test` を実行する。
 
 ```yaml
-name: iOS
+name: Swift Package CI
 on:
-  push:
-    branches: [main, "feature/**", "fix/**"]
+  workflow_dispatch:
   pull_request:
+  push:
+    branches:
+      - main
 
 jobs:
-  build-test:
-    runs-on: macos-14
+  test:
+    runs-on: ubuntu-latest
+    container:
+      image: swift:5.9-jammy
     steps:
       - uses: actions/checkout@v4
-      - uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: "15.4"
-      - run: |
-          cd ios
-          xcodebuild -scheme Shikigami \
-            -destination "platform=iOS Simulator,name=iPhone 15" \
-            clean test
+      - run: swift --version
+      - run: swift test
 ```
+
+将来 `ios/` の Xcode プロジェクトを追加した後は、別 workflow または job として macOS runner 上の `xcodebuild test` を追加する。
 
 ### 1.2 Lint
 
