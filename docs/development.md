@@ -35,7 +35,7 @@ shikigami/
 └── .github/workflows/           # CI/CD（operations.md 参照）
 ```
 
-`ios/` `backend/` `.github/` は本書執筆時点では未作成。Phase 1 着手時に上記構造で雛形を切ること。
+`ios/` `backend/` は本書執筆時点では未作成。Phase 1 着手時に上記構造で雛形を切ること。`.github/workflows/` には Swift Package 用の CI を配置済み。
 
 ## 2. 必須ツール
 
