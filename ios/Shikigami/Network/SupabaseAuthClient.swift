@@ -1,5 +1,8 @@
 import Foundation
 import AuthenticationServices
+#if canImport(Supabase)
+import Supabase
+#endif
 
 // Supabase Auth ラッパー
 // supabase-swift SDK（github.com/supabase/supabase-swift ~> 2.0）を使用
@@ -13,21 +16,43 @@ final class SupabaseAuthClient {
 
     private(set) var currentSession: SessionData?
     private var sessionContinuations: [AsyncStream<SessionData?>.Continuation] = []
+#if canImport(Supabase)
+    private let supabase: SupabaseClient
+
+    init(supabase: SupabaseClient = SupabaseClient(
+        supabaseURL: SupabaseConfig.url,
+        supabaseKey: SupabaseConfig.anonKey
+    )) {
+        self.supabase = supabase
+    }
+#else
+    init() {}
+#endif
 
     // MARK: - Apple Sign In
 
     /// Apple Sign In JWT + nonce を使って Supabase Auth にサインイン
     /// Xcode プロジェクトでは supabase.auth.signInWithIdToken を呼び出す
     func signInWithApple(idToken: String, nonce: String) async throws {
-        // TODO: supabase.auth.signInWithIdToken(credentials: .init(provider: .apple, idToken: idToken, nonce: nonce))
-        // 仮実装：セッション確立後に currentSession を更新
+#if canImport(Supabase)
+        let session = try await supabase.auth.signInWithIdToken(
+            credentials: .init(provider: .apple, idToken: idToken, nonce: nonce)
+        )
+        let sessionData = SessionData(userId: session.user.id.uuidString, jwt: session.accessToken)
+        currentSession = sessionData
+        notifySessionChange(sessionData)
+#else
+        // SDK 未リンク時の SwiftUI プレビュー / スタブ実行用。
         let mockSession = SessionData(userId: UUID().uuidString, jwt: idToken)
         currentSession = mockSession
         notifySessionChange(mockSession)
+#endif
     }
 
     func signOut() async throws {
-        // TODO: try await supabase.auth.signOut()
+#if canImport(Supabase)
+        try await supabase.auth.signOut()
+#endif
         currentSession = nil
         notifySessionChange(nil)
     }
@@ -42,10 +67,21 @@ final class SupabaseAuthClient {
 
     /// Edge Function 呼び出し用 JWT を返す
     func currentJWT() async throws -> String {
+        if let session = currentSession {
+            return session.jwt
+        }
+#if canImport(Supabase)
+        let session = try await supabase.auth.session
+        let sessionData = SessionData(userId: session.user.id.uuidString, jwt: session.accessToken)
+        currentSession = sessionData
+        notifySessionChange(sessionData)
+        return sessionData.jwt
+#else
         guard let session = currentSession else {
             throw FortuneError.unauthorized
         }
         return session.jwt
+#endif
     }
 
     private func notifySessionChange(_ session: SessionData?) {

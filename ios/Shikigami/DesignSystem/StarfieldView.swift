@@ -21,7 +21,7 @@ struct StarfieldView: View {
                 x: gen.nextDouble(),
                 y: gen.nextDouble(),
                 radius: 1 + gen.nextDouble() * 2,
-                duration: 2 + gen.nextDouble() * 3,
+                duration: 2 + Double(gen.nextDouble()) * 3,
                 baseOpacity: 0.3 + gen.nextDouble() * 0.7
             )
         }

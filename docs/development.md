@@ -65,6 +65,7 @@ git clone git@github.com:okamuller/shikigami.git
 cd shikigami
 
 # iOS（Phase 1 以降）
+ruby scripts/generate_ios_project.rb
 cd ios
 open Shikigami.xcodeproj
 # Xcode の Signing & Capabilities でチーム選択
@@ -74,6 +75,41 @@ cd ../backend
 supabase login
 supabase link --project-ref <PROJECT_REF>
 supabase db push
+```
+
+### 4.1 iOS プロジェクト生成とビルド確認
+
+`ios/Shikigami.xcodeproj` は生成物だが、Swift Package の依存解決結果を含むためリポジトリに保持する。
+プロジェクト設定を更新した場合は次を実行する。
+
+```bash
+ruby scripts/generate_ios_project.rb
+```
+
+公開可能なクライアントキーは `ios/Config/Base.xcconfig` に設定する。
+
+```xcconfig
+SUPABASE_URL = https://<project-ref>.supabase.co
+SUPABASE_ANON_KEY = <anon-key>
+REVENUECAT_PUBLIC_API_KEY = <public-sdk-key>
+DEVELOPMENT_TEAM = <Apple Team ID>
+PRODUCT_BUNDLE_IDENTIFIER = <bundle id>
+```
+
+Simulator / 実機向け generic build の確認:
+
+```bash
+xcodebuild -quiet -project ios/Shikigami.xcodeproj -scheme Shikigami \
+  -destination 'generic/platform=iOS Simulator' \
+  -derivedDataPath .build/xcode-derived \
+  -clonedSourcePackagesDirPath .build/xcode-packages \
+  CODE_SIGNING_ALLOWED=NO build
+
+xcodebuild -quiet -project ios/Shikigami.xcodeproj -scheme Shikigami \
+  -destination 'generic/platform=iOS' \
+  -derivedDataPath .build/xcode-derived-device \
+  -clonedSourcePackagesDirPath .build/xcode-packages \
+  CODE_SIGNING_ALLOWED=NO build
 ```
 
 ## 5. シークレット管理

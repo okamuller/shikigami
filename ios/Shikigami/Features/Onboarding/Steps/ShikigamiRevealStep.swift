@@ -1,5 +1,4 @@
 import SwiftUI
-import ShikigamiEngines
 
 struct ShikigamiRevealStep: View {
     let vm: OnboardingViewModel
@@ -89,7 +88,7 @@ struct ShikigamiRevealStep: View {
             HStack(spacing: 24) {
                 ShikigamiInfoBadge(label: NSLocalizedString("reveal.kanshi", comment: ""), value: "\(kanName)\(shiName)")
                 ShikigamiInfoBadge(label: NSLocalizedString("reveal.gogyo", comment: ""), value: gogyoJa)
-                ShikigamiInfoBadge(label: NSLocalizedString("reveal.kichi", comment: ""), value: shikigami.kichi)
+                ShikigamiInfoBadge(label: NSLocalizedString("reveal.kichi", comment: ""), value: shikigami.kichi.rawValue)
             }
 
             Text(shikigami.meaning)
