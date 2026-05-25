@@ -18,16 +18,31 @@ final class SupabaseAuthClient {
     private var sessionContinuations: [AsyncStream<SessionData?>.Continuation] = []
 #if canImport(Supabase)
     private let supabase: SupabaseClient
+    private var authStateTask: Task<Void, Never>?
 
     init(supabase: SupabaseClient = SupabaseClient(
         supabaseURL: SupabaseConfig.url,
         supabaseKey: SupabaseConfig.anonKey
     )) {
         self.supabase = supabase
+        if let session = supabase.auth.currentSession {
+            currentSession = Self.sessionData(from: session)
+        }
+        authStateTask = Task { [weak self] in
+            for await state in supabase.auth.authStateChanges {
+                self?.updateSession(state.session)
+            }
+        }
     }
 #else
     init() {}
 #endif
+
+    deinit {
+#if canImport(Supabase)
+        authStateTask?.cancel()
+#endif
+    }
 
     // MARK: - Apple Sign In
 
@@ -67,14 +82,10 @@ final class SupabaseAuthClient {
 
     /// Edge Function 呼び出し用 JWT を返す
     func currentJWT() async throws -> String {
-        if let session = currentSession {
-            return session.jwt
-        }
 #if canImport(Supabase)
         let session = try await supabase.auth.session
-        let sessionData = SessionData(userId: session.user.id.uuidString, jwt: session.accessToken)
-        currentSession = sessionData
-        notifySessionChange(sessionData)
+        let sessionData = Self.sessionData(from: session)
+        updateSession(sessionData)
         return sessionData.jwt
 #else
         guard let session = currentSession else {
@@ -87,6 +98,21 @@ final class SupabaseAuthClient {
     private func notifySessionChange(_ session: SessionData?) {
         sessionContinuations.forEach { $0.yield(session) }
     }
+
+    private func updateSession(_ session: SessionData?) {
+        currentSession = session
+        notifySessionChange(session)
+    }
+
+#if canImport(Supabase)
+    private func updateSession(_ session: Session?) {
+        updateSession(session.map(Self.sessionData(from:)))
+    }
+
+    private static func sessionData(from session: Session) -> SessionData {
+        SessionData(userId: session.user.id.uuidString, jwt: session.accessToken)
+    }
+#endif
 }
 
 struct SessionData {
