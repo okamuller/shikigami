@@ -1,0 +1,551 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 46;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0DBA984106CAC2581FDB379E /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = FA64C26EA6330D0F326CAF56 /* Localizable.strings */; };
+		1838C1DE99E3FA0028F4723F /* BirthDateStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0232511A71F0FE35333FBE04 /* BirthDateStep.swift */; };
+		19DE253FECBF67D91DFD5139 /* PaywallCompletionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7B2EA30FCDA5ABC821E12C88 /* PaywallCompletionView.swift */; };
+		1B175D4650E1E81ACC0066E9 /* ShikigamiRevealStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8793E5CCE3021196DE913B0C /* ShikigamiRevealStep.swift */; };
+		1CDF359736311B6C2D077082 /* AppDependencies.swift in Sources */ = {isa = PBXBuildFile; fileRef = D76B885935C7515D13A901DB /* AppDependencies.swift */; };
+		1EC4BE08B006037834D7CB68 /* WelcomeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = E921D8C13964B30D30CDB9D3 /* WelcomeStep.swift */; };
+		327B48BA1FD54C7D6B976E32 /* FortuneRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3432E28442411FFA96E0C7C /* FortuneRepository.swift */; };
+		330AF3E1DAF6D15AC6E514FA /* ShikigamiApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = EADB07F856E71A8C30EDDF6F /* ShikigamiApp.swift */; };
+		39FAA597E4621B5489FDC3CB /* Animations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CCA70FC136B48D7DD6ABDD /* Animations.swift */; };
+		4DB42400504E95FA5C07B2AB /* TopicStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = F8364581B5B48B52599CEB3C /* TopicStep.swift */; };
+		523C90115AE552DA5DF164D4 /* PaywallViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = ABD8C3CB0D148F0DB5CEE7A4 /* PaywallViewModel.swift */; };
+		5B3269ADB273EF612DF861C3 /* Colors.swift in Sources */ = {isa = PBXBuildFile; fileRef = B01CA077D18030B85A3C8CBD /* Colors.swift */; };
+		635F2F29E28C8D6DD6CDAD77 /* Typography.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E2E38CF4F17EF13ECFC58CC /* Typography.swift */; };
+		74177B0DBF3798A6DCFDDB0B /* HomeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 17E3F21012BA72460B6E2792 /* HomeViewModel.swift */; };
+		78C9E631637997E201924998 /* SupabaseAuthClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2B0EAF030C3342B40D777785 /* SupabaseAuthClient.swift */; };
+		7FD34019BDE19C68A8BCDA33 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 79D898EED83EF5903577321B /* User.swift */; };
+		835FF705FA46E3833FD5E74C /* Meishiki.swift in Sources */ = {isa = PBXBuildFile; fileRef = FD064A98A2D43669D8A92198 /* Meishiki.swift */; };
+		8457F7D548FACDB1B1FE2C94 /* StarfieldView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 177013D7FB0A085542B32412 /* StarfieldView.swift */; };
+		85BB825368FD2A38D460B95B /* Subscription.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7B9DC49B390B1C903B98056 /* Subscription.swift */; };
+		874E2D52A69631BD97B4891D /* GenderStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8311DCE970F56A39FF2BDE5A /* GenderStep.swift */; };
+		9CA62DE2F5EDFC276058BCF6 /* FortuneViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 41F6E81D84D9476FD0E67085 /* FortuneViewModel.swift */; };
+		A7D88B4EA35A67F78B0E492C /* OnboardingViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9572E18A943486D8C42A0B75 /* OnboardingViewModel.swift */; };
+		AE3FC15396B6A2911AB0EA57 /* PlanSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 300700541FA3D3680F23FC0F /* PlanSelectionView.swift */; };
+		B5BB6C4BA0ACEE34B83AFFD6 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 21C0A3C74416FAA7D2F20C52 /* UserRepository.swift */; };
+		B62C1C94660B3A57A4A49F62 /* FortuneRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0FF62D0663BBE2532DAA322 /* FortuneRequest.swift */; };
+		B69EE04A74C114C5E96E9E4A /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CB38BD90768C8AA256F331FA /* HomeView.swift */; };
+		B86190341F58DCDD078F5C50 /* SeimeiEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2F9843B465AD0C8CEB70C7BF /* SeimeiEngine.swift */; };
+		BA318E13797064A3DB80C8D6 /* ClaudeClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA669164D0219F7235A232AD /* ClaudeClient.swift */; };
+		BB3A221E983CBFF55A3BC55C /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = F398C1A4D1C2426897E2C621 /* SwiftPackageProductDependency */; };
+		BDF44AF2F3CA0080E9C13DD8 /* Gogyo.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD3D4E841AFC6AB8440F34F4 /* Gogyo.swift */; };
+		BF6AA5EA46A390B2B0FF77C6 /* PentagramView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9C6872E6A4629ED5B326AFC4 /* PentagramView.swift */; };
+		CAEC9BD6806A984DEDD055FB /* PaywallView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EFD6605A2E506F69DA324A3 /* PaywallView.swift */; };
+		D15DD96EE0896202AF2982AE /* OnboardingFlow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 305D6BB1069C6703E4AA197D /* OnboardingFlow.swift */; };
+		DC08389098D9DAA51342B4DE /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4CF876600B0FE513DE9304C4 /* RootView.swift */; };
+		DDCAE3D49199EF5B2675C407 /* Fortune.swift in Sources */ = {isa = PBXBuildFile; fileRef = 013EB0271AC47711358E3681 /* Fortune.swift */; };
+		DF3BCF966FBA5C77FA9AD949 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3BA670B1445871CEE5383B0 /* Foundation.framework */; };
+		E12944DFB628BE122650F3F6 /* FortuneInputView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9806B08F713EE1153D4606D9 /* FortuneInputView.swift */; };
+		E6A05EA0DDC91215BA05EEB9 /* SupabaseConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = F65B05259051DB434CD9874A /* SupabaseConfig.swift */; };
+		EAE89824FA605C31E84D6FED /* Shikigami.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FFBD28D8070BECA5D50C08D /* Shikigami.swift */; };
+		F5F63C0755A098692C22B4BC /* FortuneResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EC0A390BA51241A75FA59C0 /* FortuneResultView.swift */; };
+		FE4D4562E60D886490C2593F /* RevenueCatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 31C28796EA6E2027868484CA /* RevenueCatManager.swift */; };
+		FF5AE45033C78EF625A35AD8 /* BuildFile in Frameworks */ = {isa = PBXBuildFile; productRef = A09FD9B5C74955D9C825001C /* SwiftPackageProductDependency */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		013EB0271AC47711358E3681 /* Fortune.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Fortune.swift; path = Models/Fortune.swift; sourceTree = "<group>"; };
+		0232511A71F0FE35333FBE04 /* BirthDateStep.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = BirthDateStep.swift; path = Features/Onboarding/Steps/BirthDateStep.swift; sourceTree = "<group>"; };
+		0FFBD28D8070BECA5D50C08D /* Shikigami.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Shikigami.swift; sourceTree = "<group>"; };
+		177013D7FB0A085542B32412 /* StarfieldView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = StarfieldView.swift; path = DesignSystem/StarfieldView.swift; sourceTree = "<group>"; };
+		17E3F21012BA72460B6E2792 /* HomeViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HomeViewModel.swift; path = Features/Home/HomeViewModel.swift; sourceTree = "<group>"; };
+		21C0A3C74416FAA7D2F20C52 /* UserRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UserRepository.swift; path = Network/UserRepository.swift; sourceTree = "<group>"; };
+		2B0EAF030C3342B40D777785 /* SupabaseAuthClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SupabaseAuthClient.swift; path = Network/SupabaseAuthClient.swift; sourceTree = "<group>"; };
+		2E2E38CF4F17EF13ECFC58CC /* Typography.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Typography.swift; path = DesignSystem/Typography.swift; sourceTree = "<group>"; };
+		2F9843B465AD0C8CEB70C7BF /* SeimeiEngine.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = SeimeiEngine.swift; sourceTree = "<group>"; };
+		300700541FA3D3680F23FC0F /* PlanSelectionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PlanSelectionView.swift; path = Features/Paywall/PlanSelectionView.swift; sourceTree = "<group>"; };
+		305D6BB1069C6703E4AA197D /* OnboardingFlow.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OnboardingFlow.swift; path = Features/Onboarding/OnboardingFlow.swift; sourceTree = "<group>"; };
+		31C28796EA6E2027868484CA /* RevenueCatManager.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RevenueCatManager.swift; path = Infrastructure/RevenueCatManager.swift; sourceTree = "<group>"; };
+		32B3D23B9294584A01B8587A /* Base.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Base.xcconfig; sourceTree = "<group>"; };
+		41F6E81D84D9476FD0E67085 /* FortuneViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneViewModel.swift; path = Features/Fortune/FortuneViewModel.swift; sourceTree = "<group>"; };
+		4CF876600B0FE513DE9304C4 /* RootView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = RootView.swift; path = App/RootView.swift; sourceTree = "<group>"; };
+		5AA747E5865FC28242E68131 /* Debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Debug.xcconfig; sourceTree = "<group>"; };
+		79D898EED83EF5903577321B /* User.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = User.swift; path = Models/User.swift; sourceTree = "<group>"; };
+		7B2EA30FCDA5ABC821E12C88 /* PaywallCompletionView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PaywallCompletionView.swift; path = Features/Paywall/PaywallCompletionView.swift; sourceTree = "<group>"; };
+		7EC0A390BA51241A75FA59C0 /* FortuneResultView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneResultView.swift; path = Features/Fortune/FortuneResultView.swift; sourceTree = "<group>"; };
+		8311DCE970F56A39FF2BDE5A /* GenderStep.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = GenderStep.swift; path = Features/Onboarding/Steps/GenderStep.swift; sourceTree = "<group>"; };
+		86CCA70FC136B48D7DD6ABDD /* Animations.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Animations.swift; path = DesignSystem/Animations.swift; sourceTree = "<group>"; };
+		8793E5CCE3021196DE913B0C /* ShikigamiRevealStep.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShikigamiRevealStep.swift; path = Features/Onboarding/Steps/ShikigamiRevealStep.swift; sourceTree = "<group>"; };
+		88A8E6BA5AA858679A7ECFAF /* Shikigami.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = Shikigami.entitlements; sourceTree = "<group>"; };
+		8EFD6605A2E506F69DA324A3 /* PaywallView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PaywallView.swift; path = Features/Paywall/PaywallView.swift; sourceTree = "<group>"; };
+		9572E18A943486D8C42A0B75 /* OnboardingViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = OnboardingViewModel.swift; path = Features/Onboarding/OnboardingViewModel.swift; sourceTree = "<group>"; };
+		9806B08F713EE1153D4606D9 /* FortuneInputView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneInputView.swift; path = Features/Fortune/FortuneInputView.swift; sourceTree = "<group>"; };
+		9C6872E6A4629ED5B326AFC4 /* PentagramView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PentagramView.swift; path = DesignSystem/PentagramView.swift; sourceTree = "<group>"; };
+		A0B9C528A8CE3877A7703749 /* Release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = Release.xcconfig; sourceTree = "<group>"; };
+		A7B9DC49B390B1C903B98056 /* Subscription.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Subscription.swift; path = Models/Subscription.swift; sourceTree = "<group>"; };
+		ABD8C3CB0D148F0DB5CEE7A4 /* PaywallViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PaywallViewModel.swift; path = Features/Paywall/PaywallViewModel.swift; sourceTree = "<group>"; };
+		B01CA077D18030B85A3C8CBD /* Colors.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = Colors.swift; path = DesignSystem/Colors.swift; sourceTree = "<group>"; };
+		C0FF62D0663BBE2532DAA322 /* FortuneRequest.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneRequest.swift; path = Models/FortuneRequest.swift; sourceTree = "<group>"; };
+		C333CAF8C5373B9C7735B2EF /* Shikigami-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "Shikigami-Info.plist"; sourceTree = "<group>"; };
+		C3432E28442411FFA96E0C7C /* FortuneRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneRepository.swift; path = Network/FortuneRepository.swift; sourceTree = "<group>"; };
+		CB38BD90768C8AA256F331FA /* HomeView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = HomeView.swift; path = Features/Home/HomeView.swift; sourceTree = "<group>"; };
+		CD3D4E841AFC6AB8440F34F4 /* Gogyo.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Gogyo.swift; sourceTree = "<group>"; };
+		D76B885935C7515D13A901DB /* AppDependencies.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = AppDependencies.swift; path = App/AppDependencies.swift; sourceTree = "<group>"; };
+		DA669164D0219F7235A232AD /* ClaudeClient.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ClaudeClient.swift; path = Network/ClaudeClient.swift; sourceTree = "<group>"; };
+		E3BA670B1445871CEE5383B0 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS12.2.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		E921D8C13964B30D30CDB9D3 /* WelcomeStep.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = WelcomeStep.swift; path = Features/Onboarding/Steps/WelcomeStep.swift; sourceTree = "<group>"; };
+		EADB07F856E71A8C30EDDF6F /* ShikigamiApp.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShikigamiApp.swift; path = App/ShikigamiApp.swift; sourceTree = "<group>"; };
+		F631A02B118004DE7B4F0AE6 /* Shikigami.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Shikigami.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F65B05259051DB434CD9874A /* SupabaseConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SupabaseConfig.swift; path = Network/SupabaseConfig.swift; sourceTree = "<group>"; };
+		F8364581B5B48B52599CEB3C /* TopicStep.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = TopicStep.swift; path = Features/Onboarding/Steps/TopicStep.swift; sourceTree = "<group>"; };
+		FA64C26EA6330D0F326CAF56 /* Localizable.strings */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.strings; name = Localizable.strings; path = Resources/Localizable.strings; sourceTree = "<group>"; };
+		FD064A98A2D43669D8A92198 /* Meishiki.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = Meishiki.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		0B87D50A0F215E92B780D8BD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				DF3BCF966FBA5C77FA9AD949 /* Foundation.framework in Frameworks */,
+				BB3A221E983CBFF55A3BC55C /* BuildFile in Frameworks */,
+				FF5AE45033C78EF625A35AD8 /* BuildFile in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		2BDFC5D981EC66B61AB68F4D = {
+			isa = PBXGroup;
+			children = (
+				51A4728286EF90D079FFD201 /* Products */,
+				79351A7D8C02E6917F163FF8 /* Frameworks */,
+				9F1599F4E19E1153FF2AACB5 /* Shikigami */,
+				CF09875DE2DB772F64F8A8E3 /* Engines */,
+				50F3C7E3C034E3ED460A841F /* Config */,
+			);
+			sourceTree = "<group>";
+		};
+		50F3C7E3C034E3ED460A841F /* Config */ = {
+			isa = PBXGroup;
+			children = (
+				32B3D23B9294584A01B8587A /* Base.xcconfig */,
+				5AA747E5865FC28242E68131 /* Debug.xcconfig */,
+				A0B9C528A8CE3877A7703749 /* Release.xcconfig */,
+				88A8E6BA5AA858679A7ECFAF /* Shikigami.entitlements */,
+				C333CAF8C5373B9C7735B2EF /* Shikigami-Info.plist */,
+			);
+			name = Config;
+			path = Config;
+			sourceTree = "<group>";
+		};
+		51A4728286EF90D079FFD201 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F631A02B118004DE7B4F0AE6 /* Shikigami.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		79351A7D8C02E6917F163FF8 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				CD59D2B34132831669590999 /* iOS */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		9F1599F4E19E1153FF2AACB5 /* Shikigami */ = {
+			isa = PBXGroup;
+			children = (
+				D76B885935C7515D13A901DB /* AppDependencies.swift */,
+				4CF876600B0FE513DE9304C4 /* RootView.swift */,
+				EADB07F856E71A8C30EDDF6F /* ShikigamiApp.swift */,
+				86CCA70FC136B48D7DD6ABDD /* Animations.swift */,
+				B01CA077D18030B85A3C8CBD /* Colors.swift */,
+				9C6872E6A4629ED5B326AFC4 /* PentagramView.swift */,
+				177013D7FB0A085542B32412 /* StarfieldView.swift */,
+				2E2E38CF4F17EF13ECFC58CC /* Typography.swift */,
+				9806B08F713EE1153D4606D9 /* FortuneInputView.swift */,
+				7EC0A390BA51241A75FA59C0 /* FortuneResultView.swift */,
+				41F6E81D84D9476FD0E67085 /* FortuneViewModel.swift */,
+				CB38BD90768C8AA256F331FA /* HomeView.swift */,
+				17E3F21012BA72460B6E2792 /* HomeViewModel.swift */,
+				305D6BB1069C6703E4AA197D /* OnboardingFlow.swift */,
+				9572E18A943486D8C42A0B75 /* OnboardingViewModel.swift */,
+				0232511A71F0FE35333FBE04 /* BirthDateStep.swift */,
+				8311DCE970F56A39FF2BDE5A /* GenderStep.swift */,
+				8793E5CCE3021196DE913B0C /* ShikigamiRevealStep.swift */,
+				F8364581B5B48B52599CEB3C /* TopicStep.swift */,
+				E921D8C13964B30D30CDB9D3 /* WelcomeStep.swift */,
+				7B2EA30FCDA5ABC821E12C88 /* PaywallCompletionView.swift */,
+				8EFD6605A2E506F69DA324A3 /* PaywallView.swift */,
+				ABD8C3CB0D148F0DB5CEE7A4 /* PaywallViewModel.swift */,
+				300700541FA3D3680F23FC0F /* PlanSelectionView.swift */,
+				31C28796EA6E2027868484CA /* RevenueCatManager.swift */,
+				013EB0271AC47711358E3681 /* Fortune.swift */,
+				C0FF62D0663BBE2532DAA322 /* FortuneRequest.swift */,
+				A7B9DC49B390B1C903B98056 /* Subscription.swift */,
+				79D898EED83EF5903577321B /* User.swift */,
+				DA669164D0219F7235A232AD /* ClaudeClient.swift */,
+				C3432E28442411FFA96E0C7C /* FortuneRepository.swift */,
+				2B0EAF030C3342B40D777785 /* SupabaseAuthClient.swift */,
+				F65B05259051DB434CD9874A /* SupabaseConfig.swift */,
+				21C0A3C74416FAA7D2F20C52 /* UserRepository.swift */,
+				FA64C26EA6330D0F326CAF56 /* Localizable.strings */,
+			);
+			name = Shikigami;
+			path = Shikigami;
+			sourceTree = "<group>";
+		};
+		CD59D2B34132831669590999 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				E3BA670B1445871CEE5383B0 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		CF09875DE2DB772F64F8A8E3 /* Engines */ = {
+			isa = PBXGroup;
+			children = (
+				CD3D4E841AFC6AB8440F34F4 /* Gogyo.swift */,
+				FD064A98A2D43669D8A92198 /* Meishiki.swift */,
+				2F9843B465AD0C8CEB70C7BF /* SeimeiEngine.swift */,
+				0FFBD28D8070BECA5D50C08D /* Shikigami.swift */,
+			);
+			name = Engines;
+			path = ../Sources/Engines;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		DE68E657156F80019891AF00 /* Shikigami */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = FAA864F31B2AC14FC042141E /* Build configuration list for PBXNativeTarget "Shikigami" */;
+			buildPhases = (
+				B9FEF6B92D662C21F86E5F16 /* Sources */,
+				0B87D50A0F215E92B780D8BD /* Frameworks */,
+				8CBF945DB8D789A30F491968 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = Shikigami;
+			packageProductDependencies = (
+				F398C1A4D1C2426897E2C621 /* SwiftPackageProductDependency */,
+				A09FD9B5C74955D9C825001C /* SwiftPackageProductDependency */,
+			);
+			productName = Shikigami;
+			productReference = F631A02B118004DE7B4F0AE6 /* Shikigami.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		5B918409C939C8C8B76AC636 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				LastSwiftUpdateCheck = 1100;
+				LastUpgradeCheck = 1100;
+			};
+			buildConfigurationList = 8901BC86836BA4BE7E927C63 /* Build configuration list for PBXProject "Shikigami" */;
+			compatibilityVersion = "Xcode 3.2";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 2BDFC5D981EC66B61AB68F4D;
+			packageReferences = (
+				A00C6EE195071B670CC196AB /* RemoteSwiftPackageReference */,
+				5FC6E610D490A2D1980B34DA /* RemoteSwiftPackageReference */,
+			);
+			productRefGroup = 51A4728286EF90D079FFD201 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				DE68E657156F80019891AF00 /* Shikigami */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8CBF945DB8D789A30F491968 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				0DBA984106CAC2581FDB379E /* Localizable.strings in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		B9FEF6B92D662C21F86E5F16 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1CDF359736311B6C2D077082 /* AppDependencies.swift in Sources */,
+				DC08389098D9DAA51342B4DE /* RootView.swift in Sources */,
+				330AF3E1DAF6D15AC6E514FA /* ShikigamiApp.swift in Sources */,
+				39FAA597E4621B5489FDC3CB /* Animations.swift in Sources */,
+				5B3269ADB273EF612DF861C3 /* Colors.swift in Sources */,
+				BF6AA5EA46A390B2B0FF77C6 /* PentagramView.swift in Sources */,
+				8457F7D548FACDB1B1FE2C94 /* StarfieldView.swift in Sources */,
+				635F2F29E28C8D6DD6CDAD77 /* Typography.swift in Sources */,
+				E12944DFB628BE122650F3F6 /* FortuneInputView.swift in Sources */,
+				F5F63C0755A098692C22B4BC /* FortuneResultView.swift in Sources */,
+				9CA62DE2F5EDFC276058BCF6 /* FortuneViewModel.swift in Sources */,
+				B69EE04A74C114C5E96E9E4A /* HomeView.swift in Sources */,
+				74177B0DBF3798A6DCFDDB0B /* HomeViewModel.swift in Sources */,
+				D15DD96EE0896202AF2982AE /* OnboardingFlow.swift in Sources */,
+				A7D88B4EA35A67F78B0E492C /* OnboardingViewModel.swift in Sources */,
+				1838C1DE99E3FA0028F4723F /* BirthDateStep.swift in Sources */,
+				874E2D52A69631BD97B4891D /* GenderStep.swift in Sources */,
+				1B175D4650E1E81ACC0066E9 /* ShikigamiRevealStep.swift in Sources */,
+				4DB42400504E95FA5C07B2AB /* TopicStep.swift in Sources */,
+				1EC4BE08B006037834D7CB68 /* WelcomeStep.swift in Sources */,
+				19DE253FECBF67D91DFD5139 /* PaywallCompletionView.swift in Sources */,
+				CAEC9BD6806A984DEDD055FB /* PaywallView.swift in Sources */,
+				523C90115AE552DA5DF164D4 /* PaywallViewModel.swift in Sources */,
+				AE3FC15396B6A2911AB0EA57 /* PlanSelectionView.swift in Sources */,
+				FE4D4562E60D886490C2593F /* RevenueCatManager.swift in Sources */,
+				DDCAE3D49199EF5B2675C407 /* Fortune.swift in Sources */,
+				B62C1C94660B3A57A4A49F62 /* FortuneRequest.swift in Sources */,
+				85BB825368FD2A38D460B95B /* Subscription.swift in Sources */,
+				7FD34019BDE19C68A8BCDA33 /* User.swift in Sources */,
+				BA318E13797064A3DB80C8D6 /* ClaudeClient.swift in Sources */,
+				327B48BA1FD54C7D6B976E32 /* FortuneRepository.swift in Sources */,
+				78C9E631637997E201924998 /* SupabaseAuthClient.swift in Sources */,
+				E6A05EA0DDC91215BA05EEB9 /* SupabaseConfig.swift in Sources */,
+				B5BB6C4BA0ACEE34B83AFFD6 /* UserRepository.swift in Sources */,
+				BDF44AF2F3CA0080E9C13DD8 /* Gogyo.swift in Sources */,
+				835FF705FA46E3833FD5E74C /* Meishiki.swift in Sources */,
+				B86190341F58DCDD078F5C50 /* SeimeiEngine.swift in Sources */,
+				EAE89824FA605C31E84D6FED /* Shikigami.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		5B05D5D147BA5B90B1BAD70D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5AA747E5865FC28242E68131 /* Debug.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Config/Shikigami.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/Shikigami-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		7F8A552F436652E0233CDF7E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 5AA747E5865FC28242E68131 /* Debug.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		93EFBC26126C9FF6C199BF27 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A0B9C528A8CE3877A7703749 /* Release.xcconfig */;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		EB3DE86C6AC5BE86A28C1AE7 /* Release */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A0B9C528A8CE3877A7703749 /* Release.xcconfig */;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = Config/Shikigami.entitlements;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = "$(DEVELOPMENT_TEAM)";
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "Config/Shikigami-Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
+				MARKETING_VERSION = 0.1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "$(PRODUCT_BUNDLE_IDENTIFIER)";
+				SDKROOT = iphoneos;
+				SWIFT_VERSION = 5.9;
+				TARGETED_DEVICE_FAMILY = 1;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		8901BC86836BA4BE7E927C63 /* Build configuration list for PBXProject "Shikigami" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7F8A552F436652E0233CDF7E /* Debug */,
+				93EFBC26126C9FF6C199BF27 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		FAA864F31B2AC14FC042141E /* Build configuration list for PBXNativeTarget "Shikigami" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				EB3DE86C6AC5BE86A28C1AE7 /* Release */,
+				5B05D5D147BA5B90B1BAD70D /* Debug */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		5FC6E610D490A2D1980B34DA /* RemoteSwiftPackageReference */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/RevenueCat/purchases-ios.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.0.0;
+			};
+		};
+		A00C6EE195071B670CC196AB /* RemoteSwiftPackageReference */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/supabase/supabase-swift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		A09FD9B5C74955D9C825001C /* SwiftPackageProductDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 5FC6E610D490A2D1980B34DA /* RemoteSwiftPackageReference */;
+			productName = RevenueCat;
+		};
+		F398C1A4D1C2426897E2C621 /* SwiftPackageProductDependency */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = A00C6EE195071B670CC196AB /* RemoteSwiftPackageReference */;
+			productName = Supabase;
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 5B918409C939C8C8B76AC636 /* Project object */;
+}

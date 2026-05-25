@@ -18,7 +18,7 @@ struct OnboardingFlow: View {
 
             switch vm.currentStep {
             case .welcome:
-                WelcomeStep { vm.advance() }
+                WelcomeStep(vm: vm)
             case .birthDate:
                 BirthDateStep(birthDate: $vm.birthDate) { vm.advance() }
             case .gender:

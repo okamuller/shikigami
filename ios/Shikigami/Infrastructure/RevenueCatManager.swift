@@ -1,10 +1,7 @@
 import Foundation
-
-// RevenueCat SDK ラッパー
-// Xcode プロジェクトに RevenueCat SDK（github.com/RevenueCat/purchases-ios）を追加後、
-// import RevenueCat のコメントを外し、実装を有効化すること
-
-// import RevenueCat  ← Xcode 側で有効化
+#if canImport(RevenueCat)
+import RevenueCat
+#endif
 
 final class RevenueCatManager: Sendable {
     static let shared = RevenueCatManager()
@@ -17,28 +14,37 @@ final class RevenueCatManager: Sendable {
     /// appUserId = Supabase auth.users.id（UUID文字列）でないと
     /// revenuecat-webhook の app_user_id と一致しない
     func configure(apiKey: String, userId: String) {
-        // TODO: Purchases.configure(withAPIKey: apiKey)
-        // TODO: Purchases.shared.logIn(userId) { _, _, _ in }
+#if canImport(RevenueCat)
+        Purchases.configure(withAPIKey: apiKey, appUserID: userId)
+#endif
     }
 
     // MARK: - Tier 取得
 
     func fetchTier() async -> SubscriptionTier {
-        // TODO: let info = try? await Purchases.shared.customerInfo()
-        // return mapEntitlement(info)
+#if canImport(RevenueCat)
+        guard let info = try? await Purchases.shared.customerInfo() else { return .free }
+        return mapEntitlement(info)
+#else
         return .free
+#endif
     }
 
     // MARK: - 購入
 
     func purchase(plan: PaywallPlan) async throws {
-        // TODO: offerings = try await Purchases.shared.offerings()
-        // let package = plan == .annual ? offerings.current?.annual : offerings.current?.monthly
-        // try await Purchases.shared.purchase(package: package!)
+#if canImport(RevenueCat)
+        let offerings = try await Purchases.shared.offerings()
+        let package = plan == .annual ? offerings.current?.annual : offerings.current?.monthly
+        guard let package else { throw RevenueCatError.packageNotFound }
+        _ = try await Purchases.shared.purchase(package: package)
+#endif
     }
 
     func restorePurchases() async throws {
-        // TODO: try await Purchases.shared.restorePurchases()
+#if canImport(RevenueCat)
+        _ = try await Purchases.shared.restorePurchases()
+#endif
     }
 
     // MARK: - プライベートヘルパー
@@ -46,7 +52,26 @@ final class RevenueCatManager: Sendable {
     // RevenueCat CustomerInfo のエンタイトルメントを SubscriptionTier にマップ
     // divine_ プレフィックスのエンタイトルメントは divine tier
     private func mapEntitlement(_ info: Any?) -> SubscriptionTier {
-        // TODO: implement based on info.entitlements
+#if canImport(RevenueCat)
+        guard let info = info as? CustomerInfo else { return .free }
+        if info.entitlements.active.keys.contains(where: { $0.hasPrefix("divine") }) {
+            return .divine
+        }
+        if info.entitlements.active.keys.contains("premium") {
+            return .premium
+        }
+#endif
         return .free
+    }
+}
+
+enum RevenueCatError: LocalizedError {
+    case packageNotFound
+
+    var errorDescription: String? {
+        switch self {
+        case .packageNotFound:
+            return "購入プランが見つかりません。"
+        }
     }
 }

@@ -12,7 +12,7 @@ struct FortuneRequest: Encodable {
     }
 }
 
-struct MeishikiPayload: Encodable {
+struct MeishikiPayload: Codable {
     let kanIndex: Int
     let shiIndex: Int
     let shikigamiIndex: Int
