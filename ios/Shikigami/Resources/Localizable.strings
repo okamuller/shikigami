@@ -95,6 +95,9 @@
 "plan.cta" = "契約を結ぶ";
 "plan.restore" = "購入を復元する";
 "plan.legal" = "購入はいつでも解約できます。Apple IDの設定からサブスクリプションを管理できます。利用規約・プライバシーポリシーは設定画面よりご確認ください。";
+"plan.savings.format" = "%@ お得";
+"plan.error.noEntitlement" = "購入は完了したが、契約状態を確認できませんでした。しばらくしてから復元をお試しください。";
+"plan.error.restoreNotFound" = "復元できる契約が見つかりませんでした。";
 
 // MARK: - 契約完了
 "paywall.completion.title" = "契約成立";
