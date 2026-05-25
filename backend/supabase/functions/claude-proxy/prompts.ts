@@ -46,6 +46,22 @@ interface MeishikiPayload {
   score: number;
 }
 
+interface FortuneHistoryRow {
+  topic: string | null;
+  response: string;
+}
+
+export function buildHistorySummary(rows: FortuneHistoryRow[]): string {
+  return rows
+    .map((row) => {
+      const topic = row.topic?.trim() || "unknown";
+      const preview = row.response.trim().replace(/\s+/g, " ").slice(0, 40);
+      return `${topic}: ${preview}`;
+    })
+    .filter((line) => !line.endsWith(": "))
+    .join("\n");
+}
+
 export function buildUserMessage(
   meishiki: MeishikiPayload,
   birthDate: string,
