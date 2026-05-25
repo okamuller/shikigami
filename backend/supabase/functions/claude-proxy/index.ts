@@ -1,6 +1,7 @@
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { getUserClient, getServiceClient } from "../_shared/supabaseClients.ts";
 import {
+  buildHistorySummary,
   buildUserMessage,
   fallbackTextForEngine,
   selectSystemPrompt,
@@ -30,11 +31,16 @@ async function buildInputHash(
   engine: string,
   birthDate: string,
   topic: string,
-  question: string
+  question: string,
+  historySummaryHash: string
 ): Promise<string> {
   const dateJst = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
   const normalized = question.trim().normalize("NFKC").replace(/\s+/g, " ");
-  const raw = [userId, engine, birthDate, topic, normalized, "", dateJst].join("|");
+  const raw = [userId, engine, birthDate, topic, normalized, historySummaryHash, dateJst].join("|");
+  return sha256Hex(raw);
+}
+
+async function sha256Hex(raw: string): Promise<string> {
   const buffer = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(raw));
   return Array.from(new Uint8Array(buffer))
     .map((b) => b.toString(16).padStart(2, "0"))
@@ -110,8 +116,17 @@ Deno.serve(async (req: Request) => {
     return Response.json({ error: "quota_exceeded" }, { status: 402, headers: corsHeaders });
   }
 
-  // 6. Cache lookup
-  const inputHash = await buildInputHash(userId, engine, birthDate, topic, question);
+  // 6. Build personal memory summary and cache key
+  const { data: recentFortunes } = await serviceClient
+    .from("fortunes")
+    .select("topic, response")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const historySummary = buildHistorySummary(recentFortunes ?? []);
+  const historySummaryHash = historySummary ? await sha256Hex(historySummary) : "";
+  const inputHash = await buildInputHash(userId, engine, birthDate, topic, question, historySummaryHash);
 
   const { data: cached } = await serviceClient
     .from("fortunes")
@@ -134,7 +149,7 @@ Deno.serve(async (req: Request) => {
 
   // 7. Build prompt
   const systemPrompt = selectSystemPrompt(engine);
-  const userMessage = buildUserMessage(meishiki, birthDate, topic, question);
+  const userMessage = buildUserMessage(meishiki, birthDate, topic, question, historySummary);
 
   // 8. Call Anthropic API
   const modelId =

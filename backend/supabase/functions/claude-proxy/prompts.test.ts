@@ -16,6 +16,7 @@ function assertGreater(actual: number, min: number, msg?: string): void {
 }
 
 import {
+  buildHistorySummary,
   buildUserMessage,
   FALLBACK_TEXTS,
   fallbackTextForEngine,
@@ -107,6 +108,25 @@ Deno.test("buildUserMessage: historySummary 指定時は history タグあり", 
   );
   assertIncludes(msg, "<history>");
   assertIncludes(msg, "良縁あり");
+});
+
+Deno.test("buildHistorySummary: 直近履歴を topic と本文先頭40文字に整形する", () => {
+  const summary = buildHistorySummary([
+    { topic: "love", response: "良縁あり。焦らず待つべし。次の満月に手紙を出すとよい。" },
+    { topic: "work", response: "  昇進の兆しあり。\n礼を尽くせ。  " },
+  ]);
+
+  assertIncludes(summary, "love: 良縁あり。焦らず待つべし。次の満月に手紙を出すとよい。");
+  assertIncludes(summary, "work: 昇進の兆しあり。 礼を尽くせ。");
+});
+
+Deno.test("buildHistorySummary: 空本文は除外する", () => {
+  const summary = buildHistorySummary([
+    { topic: "love", response: "   " },
+    { topic: null, response: "節制が肝要じゃ。" },
+  ]);
+
+  assertEquals(summary, "unknown: 節制が肝要じゃ。");
 });
 
 Deno.test("buildUserMessage: 全 gogyo が正しくマップされる", () => {
