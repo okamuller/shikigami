@@ -31,12 +31,11 @@ async function buildInputHash(
   engine: string,
   birthDate: string,
   topic: string,
-  question: string,
-  historySummaryHash: string
+  question: string
 ): Promise<string> {
   const dateJst = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
   const normalized = question.trim().normalize("NFKC").replace(/\s+/g, " ");
-  const raw = [userId, engine, birthDate, topic, normalized, historySummaryHash, dateJst].join("|");
+  const raw = [userId, engine, birthDate, topic, normalized, dateJst].join("|");
   return sha256Hex(raw);
 }
 
@@ -125,8 +124,7 @@ Deno.serve(async (req: Request) => {
     .limit(5);
 
   const historySummary = buildHistorySummary(recentFortunes ?? []);
-  const historySummaryHash = historySummary ? await sha256Hex(historySummary) : "";
-  const inputHash = await buildInputHash(userId, engine, birthDate, topic, question, historySummaryHash);
+  const inputHash = await buildInputHash(userId, engine, birthDate, topic, question);
 
   const { data: cached } = await serviceClient
     .from("fortunes")
