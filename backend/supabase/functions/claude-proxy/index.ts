@@ -1,9 +1,9 @@
 import { corsHeaders, handleCors } from "../_shared/cors.ts";
 import { getUserClient, getServiceClient } from "../_shared/supabaseClients.ts";
 import {
-  SEIMEI_SYSTEM_PROMPT,
   buildUserMessage,
-  FALLBACK_TEXTS,
+  fallbackTextForEngine,
+  selectSystemPrompt,
 } from "./prompts.ts";
 
 const MAX_FREE_FORTUNES = 5;
@@ -62,6 +62,9 @@ Deno.serve(async (req: Request) => {
   const { engine, topic, question, meishiki } = body;
   if (!engine || !topic || !question || !meishiki) {
     return Response.json({ error: "missing_fields" }, { status: 400, headers: corsHeaders });
+  }
+  if (!["seimei", "nanboku"].includes(engine)) {
+    return Response.json({ error: "invalid_engine" }, { status: 400, headers: corsHeaders });
   }
   if (question.length > 80) {
     return Response.json({ error: "question_too_long" }, { status: 400, headers: corsHeaders });
@@ -130,7 +133,7 @@ Deno.serve(async (req: Request) => {
   }
 
   // 7. Build prompt
-  const systemPrompt = SEIMEI_SYSTEM_PROMPT;
+  const systemPrompt = selectSystemPrompt(engine);
   const userMessage = buildUserMessage(meishiki, birthDate, topic, question);
 
   // 8. Call Anthropic API
@@ -177,7 +180,7 @@ Deno.serve(async (req: Request) => {
     tokensOut = anthropicData.usage?.output_tokens ?? 0;
   } catch (_err) {
     isFallback = true;
-    fortuneText = FALLBACK_TEXTS[meishiki.shikigami_index % FALLBACK_TEXTS.length];
+    fortuneText = fallbackTextForEngine(engine, meishiki.shikigami_index);
 
     return Response.json(
       {

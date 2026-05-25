@@ -3,16 +3,19 @@ import SwiftUI
 struct FortuneInputView: View {
     let deps: AppDependencies
     let user: AppUser
+    let engine: FortuneEngine
 
     @State private var vm: FortuneViewModel
     @Environment(\.dismiss) private var dismiss
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
-    init(deps: AppDependencies, user: AppUser) {
+    init(deps: AppDependencies, user: AppUser, engine: FortuneEngine) {
         self.deps = deps
         self.user = user
+        self.engine = engine
         _vm = State(initialValue: FortuneViewModel(
+            engine: engine,
             topic: .destiny,
             userId: user.id,
             claudeClient: deps.claudeClient,
@@ -32,7 +35,7 @@ struct FortuneInputView: View {
                             .foregroundStyle(Color.white.opacity(0.6))
                     }
                     Spacer()
-                    Text(NSLocalizedString("fortune.input.title", comment: ""))
+                    Text(String(format: NSLocalizedString("fortune.input.title.format", comment: ""), NSLocalizedString(engine.nameKey, comment: "")))
                         .shikigamiFont(.label)
                         .foregroundStyle(Color.white)
                     Spacer()
@@ -94,7 +97,7 @@ struct FortuneInputView: View {
                             .padding(.vertical, 8)
                     } else {
                         CTAButton(
-                            title: NSLocalizedString("fortune.input.cta", comment: ""),
+                            title: NSLocalizedString(engine.ctaKey, comment: ""),
                             isEnabled: vm.canGenerate
                         ) {
                             Task { await vm.generate() }

@@ -1,5 +1,47 @@
 import SwiftUI
 
+enum FortuneEngine: String, CaseIterable, Codable, Identifiable {
+    case seimei
+    case nanboku
+
+    var id: String { rawValue }
+
+    var nameKey: String {
+        switch self {
+        case .seimei: return "character.seimei.name"
+        case .nanboku: return "character.nanboku.name"
+        }
+    }
+
+    var titleKey: String {
+        switch self {
+        case .seimei: return "character.seimei.title"
+        case .nanboku: return "character.nanboku.title"
+        }
+    }
+
+    var ctaKey: String {
+        switch self {
+        case .seimei: return "fortune.input.cta.seimei"
+        case .nanboku: return "fortune.input.cta.nanboku"
+        }
+    }
+
+    var accentColor: Color {
+        switch self {
+        case .seimei: return .oracleGold
+        case .nanboku: return .jadeGreen
+        }
+    }
+
+    var symbolName: String {
+        switch self {
+        case .seimei: return "sparkles"
+        case .nanboku: return "leaf.fill"
+        }
+    }
+}
+
 struct Fortune: Identifiable, Codable {
     let id: UUID
     let text: String

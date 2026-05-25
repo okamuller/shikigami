@@ -15,10 +15,22 @@ function assertGreater(actual: number, min: number, msg?: string): void {
   }
 }
 
-import { SEIMEI_SYSTEM_PROMPT, buildUserMessage, FALLBACK_TEXTS } from "./prompts.ts";
+import {
+  buildUserMessage,
+  FALLBACK_TEXTS,
+  fallbackTextForEngine,
+  NANBOKU_FALLBACK_TEXTS,
+  NANBOKU_SYSTEM_PROMPT,
+  SEIMEI_SYSTEM_PROMPT,
+  selectSystemPrompt,
+} from "./prompts.ts";
 
 Deno.test("FALLBACK_TEXTS: 12 件（十二天将分）存在する", () => {
   assertEquals(FALLBACK_TEXTS.length, 12);
+});
+
+Deno.test("NANBOKU_FALLBACK_TEXTS: 12 件（十二天将分）存在する", () => {
+  assertEquals(NANBOKU_FALLBACK_TEXTS.length, 12);
 });
 
 Deno.test("FALLBACK_TEXTS: 全件が非空文字列", () => {
@@ -31,6 +43,22 @@ Deno.test("SEIMEI_SYSTEM_PROMPT: 非空文字列かつ晴明の役割定義を�
   assertGreater(SEIMEI_SYSTEM_PROMPT.length, 0);
   assertIncludes(SEIMEI_SYSTEM_PROMPT, "安倍晴明");
   assertIncludes(SEIMEI_SYSTEM_PROMPT, "200文字");
+});
+
+Deno.test("NANBOKU_SYSTEM_PROMPT: 非空文字列かつ南北の役割定義を含む", () => {
+  assertGreater(NANBOKU_SYSTEM_PROMPT.length, 0);
+  assertIncludes(NANBOKU_SYSTEM_PROMPT, "水野南北");
+  assertIncludes(NANBOKU_SYSTEM_PROMPT, "江戸口語");
+});
+
+Deno.test("selectSystemPrompt: engine ごとに役割定義を選択する", () => {
+  assertEquals(selectSystemPrompt("seimei"), SEIMEI_SYSTEM_PROMPT);
+  assertEquals(selectSystemPrompt("nanboku"), NANBOKU_SYSTEM_PROMPT);
+});
+
+Deno.test("fallbackTextForEngine: engine ごとにフォールバック文を選択する", () => {
+  assertEquals(fallbackTextForEngine("seimei", 0), FALLBACK_TEXTS[0]);
+  assertEquals(fallbackTextForEngine("nanboku", 0), NANBOKU_FALLBACK_TEXTS[0]);
 });
 
 Deno.test("buildUserMessage: topic と question が含まれる", () => {

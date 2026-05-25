@@ -5,6 +5,7 @@ import Observation
 final class FortuneViewModel {
     var question: String = ""
     var selectedTopic: Topic
+    let engine: FortuneEngine
     var isGenerating = false
     var fortune: Fortune?
     var showPaywall = false
@@ -15,11 +16,13 @@ final class FortuneViewModel {
     private let userId: UUID
 
     init(
+        engine: FortuneEngine,
         topic: Topic,
         userId: UUID,
         claudeClient: ClaudeClient,
         userRepo: UserRepository
     ) {
+        self.engine = engine
         self.selectedTopic = topic
         self.userId = userId
         self.claudeClient = claudeClient
@@ -38,7 +41,7 @@ final class FortuneViewModel {
         do {
             let meishiki = loadMeishiki()
             let request = FortuneRequest(
-                engine: "seimei",
+                engine: engine.rawValue,
                 topic: selectedTopic.rawValue,
                 question: question,
                 meishiki: meishiki
