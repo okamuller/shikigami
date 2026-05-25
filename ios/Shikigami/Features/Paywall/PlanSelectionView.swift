@@ -27,17 +27,21 @@ struct PlanSelectionView: View {
 
                 Spacer()
 
-                VStack(spacing: 16) {
-                    // プランカード
-                    ForEach(PaywallPlan.allCases, id: \.self) { plan in
-                        PlanCard(
-                            plan: plan,
-                            isSelected: vm.selectedPlan == plan,
-                            onSelect: { vm.selectedPlan = plan }
-                        )
+                if vm.isLoadingPlans {
+                    PentagramView(size: 48, isSpinning: true)
+                } else {
+                    VStack(spacing: 16) {
+                        // プランカード
+                        ForEach(vm.plans) { plan in
+                            PlanCard(
+                                plan: plan,
+                                isSelected: vm.selectedPlanID == plan.id,
+                                onSelect: { vm.selectedPlanID = plan.id }
+                            )
+                        }
                     }
+                    .padding(.horizontal, 24)
                 }
-                .padding(.horizontal, 24)
 
                 Spacer()
 
@@ -47,7 +51,8 @@ struct PlanSelectionView: View {
                         PentagramView(size: 44, isSpinning: true)
                     } else {
                         CTAButton(
-                            title: NSLocalizedString("plan.cta", comment: "")
+                            title: NSLocalizedString("plan.cta", comment: ""),
+                            isEnabled: vm.selectedPlan != nil
                         ) {
                             Task { await vm.purchase() }
                         }
@@ -80,6 +85,9 @@ struct PlanSelectionView: View {
         .sheet(isPresented: $vm.isCompleted) {
             PaywallCompletionView()
         }
+        .task {
+            await vm.loadPlans()
+        }
     }
 }
 
@@ -92,13 +100,11 @@ private struct PlanCard: View {
         Button(action: onSelect) {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
-                    Text(plan == .monthly
-                         ? NSLocalizedString("plan.monthly.label", comment: "")
-                         : NSLocalizedString("plan.annual.label", comment: ""))
+                    Text(plan.title)
                         .shikigamiFont(.heading)
                         .foregroundStyle(Color.white)
 
-                    Text(plan.priceJa)
+                    Text(plan.priceText)
                         .shikigamiFont(.body)
                         .foregroundStyle(Color.oracleGold)
                 }
