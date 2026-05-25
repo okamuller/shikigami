@@ -6,6 +6,7 @@ struct HomeView: View {
 
     @State private var vm: HomeViewModel
     @State private var showFortuneInput = false
+    @State private var selectedEngine: FortuneEngine = .seimei
 
     init(deps: AppDependencies, user: AppUser) {
         self.deps = deps
@@ -30,7 +31,7 @@ struct HomeView: View {
         }
         .task { await vm.onAppear() }
         .sheet(isPresented: $showFortuneInput) {
-            FortuneInputView(deps: deps, user: user)
+            FortuneInputView(deps: deps, user: user, engine: selectedEngine)
         }
     }
 
@@ -55,12 +56,21 @@ struct HomeView: View {
         .fadeInUp()
     }
 
-    // MARK: - キャラクターカード（晴明）
+    // MARK: - キャラクターカード
 
     private var characterSection: some View {
         VStack(spacing: 20) {
-            CharacterCardView(character: .seimei)
-                .floatY()
+            VStack(spacing: 12) {
+                ForEach(FortuneEngine.allCases) { engine in
+                    CharacterCardView(
+                        engine: engine,
+                        isSelected: selectedEngine == engine
+                    ) {
+                        selectedEngine = engine
+                    }
+                }
+            }
+            .floatY()
 
             CTAButton(title: NSLocalizedString("home.startFortune", comment: "")) {
                 showFortuneInput = true
@@ -133,35 +143,53 @@ struct FortuneHistoryRow: View {
     }
 }
 
-enum Character { case seimei }
-
 struct CharacterCardView: View {
-    let character: Character
+    let engine: FortuneEngine
+    let isSelected: Bool
+    let action: () -> Void
 
     var body: some View {
-        VStack(spacing: 16) {
-            PentagramView(size: 80)
+        Button(action: action) {
+            HStack(spacing: 16) {
+                ZStack {
+                    if engine == .seimei {
+                        PentagramView(size: 56)
+                    } else {
+                        Image(systemName: engine.symbolName)
+                            .font(.system(size: 34, weight: .semibold))
+                            .foregroundStyle(engine.accentColor)
+                    }
+                }
+                .frame(width: 64, height: 64)
 
-            VStack(spacing: 4) {
-                Text(NSLocalizedString("character.seimei.name", comment: ""))
-                    .shikigamiFont(.heading)
-                    .foregroundStyle(Color.oracleGold)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text(NSLocalizedString(engine.nameKey, comment: ""))
+                        .shikigamiFont(.heading)
+                        .foregroundStyle(engine.accentColor)
 
-                Text(NSLocalizedString("character.seimei.title", comment: ""))
-                    .shikigamiFont(.label)
-                    .foregroundStyle(Color.white.opacity(0.6))
+                    Text(NSLocalizedString(engine.titleKey, comment: ""))
+                        .shikigamiFont(.label)
+                        .foregroundStyle(Color.white.opacity(0.6))
+                }
+
+                Spacer()
+
+                Image(systemName: isSelected ? "checkmark.circle.fill" : "circle")
+                    .foregroundStyle(isSelected ? engine.accentColor : Color.white.opacity(0.28))
             }
+            .padding(20)
+            .frame(maxWidth: .infinity)
+            .background(
+                RoundedRectangle(cornerRadius: 12)
+                    .stroke(engine.accentColor.opacity(isSelected ? 0.7 : 0.25), lineWidth: isSelected ? 1.5 : 1)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(engine.accentColor.opacity(isSelected ? 0.08 : 0.03))
+                    )
+            )
+            .shadow(color: engine.accentColor.opacity(isSelected ? 0.18 : 0.06), radius: 14)
         }
-        .padding(24)
-        .frame(maxWidth: .infinity)
-        .background(
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(Color.oracleGold.opacity(0.5), lineWidth: 1.5)
-                .background(
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(Color.white.opacity(0.03))
-                )
-        )
-        .shadow(color: Color.oracleGold.opacity(0.15), radius: 16)
+        .buttonStyle(.plain)
+        .animation(.easeInOut(duration: 0.15), value: isSelected)
     }
 }

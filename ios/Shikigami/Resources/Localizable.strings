@@ -50,12 +50,17 @@
 // MARK: - キャラクター
 "character.seimei.name" = "安倍晴明";
 "character.seimei.title" = "平安の陰陽師";
+"character.nanboku.name" = "水野南北";
+"character.nanboku.title" = "江戸の観相家";
 
 // MARK: - 鑑定入力
 "fortune.input.title" = "鑑定";
+"fortune.input.title.format" = "%@の鑑定";
 "fortune.input.topicLabel" = "悩みの種";
 "fortune.input.questionLabel" = "質問（80字以内）";
 "fortune.input.cta" = "式神を放つ";
+"fortune.input.cta.seimei" = "式神を放つ";
+"fortune.input.cta.nanboku" = "相を観る";
 
 // MARK: - 鑑定結果
 "fortune.result.fallback" = "式神の声が今しばし届かぬ";
