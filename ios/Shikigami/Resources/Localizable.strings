@@ -5,6 +5,7 @@
 
 // MARK: - タブ
 "tab.home" = "鑑定";
+"tab.physiognomy" = "観相";
 
 // MARK: - ウェルカム
 "welcome.subtitle" = "安倍晴明が、汝の天命を解き明かさん";
@@ -64,6 +65,20 @@
 
 // MARK: - 鑑定結果
 "fortune.result.fallback" = "式神の声が今しばし届かぬ";
+
+// MARK: - 観相 Slider
+"physiognomy.title" = "観相";
+"physiognomy.subtitle" = "顔立ちの印象を六つの相に分け、南北の観法で今の運気を読む";
+"physiognomy.eyebrow" = "眉の相";
+"physiognomy.eye" = "目の相";
+"physiognomy.nose" = "鼻の相";
+"physiognomy.mouth" = "口の相";
+"physiognomy.ear" = "耳の相";
+"physiognomy.chin" = "顎の相";
+"physiognomy.score" = "観相スコア";
+"physiognomy.caution" = "相に乱れあり。まず食を慎み、眠りと身なりを整えることじゃ。小さな節制が運を立て直す。";
+"physiognomy.steady" = "相は中庸、焦らず積み重ねる時じゃ。口にするもの、口にする言葉を選べば、運は静かに上向く。";
+"physiognomy.flourish" = "相に勢いがあるぞ。されど慢心は禁物じゃ。節度を守り、人への礼を尽くせば、さらに運は育つであろう。";
 
 // MARK: - ペイウォールティーザー
 "paywall.teaser.cta" = "天命の続きを見る";

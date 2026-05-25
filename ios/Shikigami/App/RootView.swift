@@ -47,6 +47,11 @@ struct MainTabView: View {
                 .tabItem {
                     Label(NSLocalizedString("tab.home", comment: ""), systemImage: "star.fill")
                 }
+
+            PhysiognomyInputView()
+                .tabItem {
+                    Label(NSLocalizedString("tab.physiognomy", comment: ""), systemImage: "face.smiling")
+                }
         }
         .tint(.oracleGold)
     }
