@@ -47,6 +47,24 @@
 "home.noFortune" = "まだ鑑定を受けておらぬ";
 "home.startFortune" = "鑑定する";
 "home.recentHistory" = "最近の鑑定";
+"home.notification.title" = "朝の式神ひとこと";
+"home.notification.message" = "毎朝8時に、今日の流れをひとこと届けます。";
+"home.notification.cta" = "受け取る";
+"home.notification.denied.title" = "通知は端末設定で有効にできます";
+"home.notification.denied.message" = "毎朝のひとことを受け取るには、iOS設定で通知を許可してください。";
+"home.notification.failed.title" = "通知の準備に失敗しました";
+"home.notification.failed.message" = "通信状態や端末設定を確認して、もう一度お試しください。";
+
+// MARK: - 通知
+"notification.daily.title" = "今日の式神ひとこと";
+"notification.daily.defaultShikigami" = "式神";
+"notification.daily.body.format" = "%@より。%@";
+"notification.daily.word.0" = "焦らず、まず一つ整えよ。";
+"notification.daily.word.1" = "縁は静かな所作から動き出す。";
+"notification.daily.word.2" = "迷いは紙に置けば、道が見える。";
+"notification.daily.word.3" = "小さな約束を守るほど運は強まる。";
+"notification.daily.word.4" = "今日は言葉を選べ。福はそこに宿る。";
+"notification.daily.word.5" = "身の回りを清めれば、気も澄みゆく。";
 
 // MARK: - キャラクター
 "character.seimei.name" = "安倍晴明";

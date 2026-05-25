@@ -56,4 +56,31 @@ final class ShikigamiTableTests: XCTestCase {
         XCTAssertEqual(m.shikigami.nameJa, "天空")
         XCTAssertEqual(m.shikigami.gogyo, .earth)
     }
+
+    func test_daily_word_selection_is_deterministic_for_date_and_shikigami() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let date = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 5, day: 25)))
+
+        let first = DailyShikigamiWordEngine.selection(shikigamiID: 5, date: date, calendar: calendar)
+        let second = DailyShikigamiWordEngine.selection(shikigamiID: 5, date: date, calendar: calendar)
+
+        XCTAssertEqual(first, second)
+        XCTAssertEqual(first.shikigami?.nameJa, "青龍")
+        XCTAssertTrue(0..<DailyShikigamiWordEngine.templateCount ~= first.templateIndex)
+        XCTAssertEqual(first.templateLocalizationKey, "notification.daily.word.\(first.templateIndex)")
+    }
+
+    func test_daily_word_selection_falls_back_for_unknown_shikigami() throws {
+        var calendar = Calendar(identifier: .gregorian)
+        calendar.timeZone = TimeZone(secondsFromGMT: 0)!
+        let date = try XCTUnwrap(calendar.date(from: DateComponents(year: 2026, month: 5, day: 25)))
+
+        let selection = DailyShikigamiWordEngine.selection(shikigamiID: 99, date: date, calendar: calendar)
+
+        XCTAssertNil(selection.shikigami)
+        XCTAssertEqual(selection.shikigamiNameJa, "式神")
+        XCTAssertNil(selection.shikigamiNameKey)
+        XCTAssertTrue(0..<DailyShikigamiWordEngine.templateCount ~= selection.templateIndex)
+    }
 }
