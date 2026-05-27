@@ -6,6 +6,7 @@
 // MARK: - タブ
 "tab.home" = "鑑定";
 "tab.physiognomy" = "観相";
+"tab.settings" = "設定";
 
 // MARK: - ウェルカム
 "welcome.subtitle" = "安倍晴明が、汝の天命を解き明かさん";
@@ -124,6 +125,17 @@
 "paywall.completion.feature2" = "全カテゴリ詳細鑑定";
 "paywall.completion.feature3" = "鑑定履歴 無制限保存";
 "paywall.completion.cta" = "式神よ、導け";
+
+// MARK: - 設定
+"settings.title" = "設定";
+"settings.section.account" = "アカウント";
+"settings.deleteAccount" = "アカウントを削除する";
+"settings.deleteConfirm.title" = "アカウントを削除しますか？";
+"settings.deleteConfirm.message" = "全ての鑑定履歴が削除されます。この操作は元に戻せません。";
+"settings.deleteConfirm.cta" = "削除する";
+"settings.deleteConfirm.cancel" = "キャンセル";
+"settings.deleteError.title" = "削除に失敗しました";
+"settings.legal" = "占いは参考情報です。結果を保証するものではありません。\n特商法・プライバシーポリシーは利用規約をご確認ください。";
 
 // MARK: - エラー
 "error.quota_exceeded" = "本日の鑑定回数の上限に達した。明日また参られよ。";

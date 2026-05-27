@@ -3,6 +3,7 @@ import Foundation
 protocol UserRepository: Sendable {
     func fetchUser() async throws -> AppUser
     func upsertUser(_ user: AppUser) async throws
+    func deleteAccount() async throws
 }
 
 // MARK: - Supabase 実装
@@ -53,6 +54,20 @@ final class SupabaseUserRepository: UserRepository, Sendable {
 
         _ = try await session.data(for: req)
     }
+
+    func deleteAccount() async throws {
+        let jwt = try await jwtProvider()
+        let url = baseURL.appendingPathComponent("functions/v1/account-delete")
+
+        var req = URLRequest(url: url)
+        req.httpMethod = "DELETE"
+        req.setValue("Bearer \(jwt)", forHTTPHeaderField: "Authorization")
+
+        let (_, response) = try await session.data(for: req)
+        guard let http = response as? HTTPURLResponse, (200..<300).contains(http.statusCode) else {
+            throw URLError(.badServerResponse)
+        }
+    }
 }
 
 // MARK: - スタブ（テスト用）
@@ -66,4 +81,5 @@ final class StubUserRepository: UserRepository, Sendable {
 
     func fetchUser() async throws -> AppUser { user }
     func upsertUser(_ updated: AppUser) async throws { user = updated }
+    func deleteAccount() async throws {}
 }
