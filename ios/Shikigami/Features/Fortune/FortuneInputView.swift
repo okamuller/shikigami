@@ -111,10 +111,18 @@ struct FortuneInputView: View {
                 .padding(.bottom, 32)
             }
         }
-        // modelContext が確定した時点で saveRecord を差し込む (P2 レビュー指摘対応)
+        // modelContext が確定した時点でクロージャを差し込む
         .task {
             vm.saveRecord = { [modelContext] record in
                 modelContext.insert(record)
+            }
+            vm.fetchRecord = { [modelContext] hash in
+                let todayStart = Calendar.current.startOfDay(for: Date())
+                var descriptor = FetchDescriptor<FortuneRecord>(
+                    predicate: #Predicate { $0.inputHash == hash && $0.createdAt >= todayStart }
+                )
+                descriptor.fetchLimit = 1
+                return try? modelContext.fetch(descriptor).first
             }
         }
         .sheet(isPresented: Binding(

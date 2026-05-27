@@ -15,9 +15,9 @@ final class FortuneViewModel {
     private let claudeClient: ClaudeClient
     private let userRepo: UserRepository
     private let userId: UUID
-    // 鑑定結果をローカル保存するクロージャ (docs/design.md §4 FortuneRecord)
-    // FortuneInputView が modelContext 確定後に差し込む
+    // FortuneInputView が modelContext 確定後に差し込む (docs/design.md §4 FortuneRecord)
     var saveRecord: ((FortuneRecord) -> Void)?
+    var fetchRecord: ((String) -> FortuneRecord?)?
 
     init(
         engine: FortuneEngine,
@@ -44,6 +44,24 @@ final class FortuneViewModel {
 
         do {
             let meishiki = loadMeishiki()
+            let hash = buildLocalHash(meishiki: meishiki)
+
+            // ローカルキャッシュヒット時は API 呼び出しをスキップ (docs/design.md §4)
+            if let cached = fetchRecord?(hash) {
+                fortune = Fortune(
+                    id: cached.id,
+                    text: cached.response,
+                    cached: true,
+                    isFallback: false,
+                    tokensIn: 0,
+                    tokensOut: 0,
+                    createdAt: cached.createdAt,
+                    topic: selectedTopic
+                )
+                isGenerating = false
+                return
+            }
+
             let request = FortuneRequest(
                 engine: engine.rawValue,
                 topic: selectedTopic.rawValue,
@@ -71,7 +89,7 @@ final class FortuneViewModel {
                     id: generatedFortune.id,
                     engine: engine.rawValue,
                     topic: selectedTopic.rawValue,
-                    inputHash: buildLocalHash(meishiki: meishiki),
+                    inputHash: hash,
                     response: response.text
                 )
                 saveRecord?(record)

@@ -252,15 +252,19 @@ final class DailyNotificationManager: DailyNotificationScheduling {
 
         for monthOffset in 0..<3 {
             guard let fireDate = firstDayOfMonth(from: .now, offset: monthOffset) else { continue }
-            let content = UNMutableNotificationContent()
-            content.title = NSLocalizedString("notification.monthly.title", comment: "")
-            content.body = NSLocalizedString("notification.monthly.body", comment: "")
-            content.sound = .default
             var dc = calendar.dateComponents([.year, .month], from: fireDate)
             dc.day = 1
             dc.hour = 8
             dc.minute = 0
             dc.timeZone = TimeZone(identifier: "Asia/Tokyo")
+            // 配信日時（JST 8:00）がすでに過去の場合はスキップ
+            var jstCal = calendar
+            jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo") ?? .current
+            guard let notificationDate = jstCal.date(from: dc), notificationDate > .now else { continue }
+            let content = UNMutableNotificationContent()
+            content.title = NSLocalizedString("notification.monthly.title", comment: "")
+            content.body = NSLocalizedString("notification.monthly.body", comment: "")
+            content.sound = .default
             let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: false)
             let req = UNNotificationRequest(identifier: "\(Self.monthlyIDPrefix).\(monthOffset)", content: content, trigger: trigger)
             try await center.add(req)
