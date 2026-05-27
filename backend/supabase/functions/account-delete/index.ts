@@ -22,15 +22,17 @@ Deno.serve(async (req: Request) => {
   }
 
   // RevenueCat: 顧客データ削除（GDPR / security.md §4.4 best-effort）
+  // iOS SDK は Swift の uuidString（大文字）で configure するため大文字に統一する
   const rcKey = Deno.env.get("REVENUECAT_SECRET_KEY");
   if (rcKey) {
     try {
-      const rcRes = await fetch(`https://api.revenuecat.com/v1/subscribers/${user.id}`, {
+      const rcUserId = user.id.toUpperCase();
+      const rcRes = await fetch(`https://api.revenuecat.com/v1/subscribers/${rcUserId}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${rcKey}` },
       });
       if (!rcRes.ok) {
-        console.warn(`RevenueCat deletion returned ${rcRes.status} for user ${user.id}`);
+        console.warn(`RevenueCat deletion returned ${rcRes.status} for user ${rcUserId}`);
       }
     } catch {
       console.warn("RevenueCat deletion skipped (non-fatal)");
