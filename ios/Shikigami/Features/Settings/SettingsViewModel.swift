@@ -1,5 +1,6 @@
 import Foundation
 import Observation
+import UserNotifications
 
 @Observable
 final class SettingsViewModel {
@@ -25,6 +26,12 @@ final class SettingsViewModel {
         isDeleting = true
         defer { isDeleting = false }
         do {
+            // 削除前にスケジュール済みのローカル通知をキャンセル
+            let center = UNUserNotificationCenter.current()
+            let pending = await center.pendingNotificationRequests()
+            let dailyIDs = pending.map(\.identifier).filter { $0.hasPrefix("daily_shikigami_word") }
+            center.removePendingNotificationRequests(withIdentifiers: dailyIDs)
+
             try await userRepo.deleteAccount()
             await RevenueCatManager.shared.logOut()
             try? await authClient.signOut()
