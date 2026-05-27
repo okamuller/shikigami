@@ -55,6 +55,11 @@
 		BB22CC33DD44EE55FF66AA78 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */; };
 		CC33DD44EE55FF66AA77BB89 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC33DD44EE55FF66AA77BB88 /* SettingsView.swift */; };
 		DD44EE55FF66AA77BB88CC9A /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD44EE55FF66AA77BB88CC99 /* SettingsViewModel.swift */; };
+		EE11AA22BB33CC44DD55EE02 /* FortuneTextGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE01 /* FortuneTextGenerator.swift */; };
+		EE11AA22BB33CC44DD55EE04 /* LocalFortuneGenerator.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE03 /* LocalFortuneGenerator.swift */; };
+		EE11AA22BB33CC44DD55EE06 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE05 /* UserProfile.swift */; };
+		EE11AA22BB33CC44DD55EE08 /* FortuneRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE07 /* FortuneRecord.swift */; };
+		EE11AA22BB33CC44DD55EE0A /* SubscriptionSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE09 /* SubscriptionSnapshot.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -110,6 +115,11 @@
 		BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShareSheet.swift; path = Features/Fortune/ShareSheet.swift; sourceTree = "<group>"; };
 		CC33DD44EE55FF66AA77BB88 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = Features/Settings/SettingsView.swift; sourceTree = "<group>"; };
 		DD44EE55FF66AA77BB88CC99 /* SettingsViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsViewModel.swift; path = Features/Settings/SettingsViewModel.swift; sourceTree = "<group>"; };
+		EE11AA22BB33CC44DD55EE01 /* FortuneTextGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneTextGenerator.swift; path = FortuneTextGenerator.swift; sourceTree = "<group>"; };
+		EE11AA22BB33CC44DD55EE03 /* LocalFortuneGenerator.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocalFortuneGenerator.swift; path = LocalFortuneGenerator.swift; sourceTree = "<group>"; };
+		EE11AA22BB33CC44DD55EE05 /* UserProfile.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UserProfile.swift; path = UserProfile.swift; sourceTree = "<group>"; };
+		EE11AA22BB33CC44DD55EE07 /* FortuneRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneRecord.swift; path = FortuneRecord.swift; sourceTree = "<group>"; };
+		EE11AA22BB33CC44DD55EE09 /* SubscriptionSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SubscriptionSnapshot.swift; path = SubscriptionSnapshot.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -222,6 +232,8 @@
 				FF604F7514D2286EC11C1C70 /* SupabaseConfig.swift */,
 				8AE77AC883C30E68B14F79E4 /* UserRepository.swift */,
 				34E1657BE3B8141C279C9651 /* Localizable.strings */,
+				EE11AA22BB33CC44DD55EE0B /* Engines (iOS) */,
+				EE11AA22BB33CC44DD55EE0C /* Persistence */,
 			);
 			name = Shikigami;
 			path = Shikigami;
@@ -233,6 +245,27 @@
 				EF4362D31D186A14464C801A /* Shikigami.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		EE11AA22BB33CC44DD55EE0B /* Engines (iOS) */ = {
+			isa = PBXGroup;
+			children = (
+				EE11AA22BB33CC44DD55EE01 /* FortuneTextGenerator.swift */,
+				EE11AA22BB33CC44DD55EE03 /* LocalFortuneGenerator.swift */,
+			);
+			name = "Engines (iOS)";
+			path = Engines;
+			sourceTree = "<group>";
+		};
+		EE11AA22BB33CC44DD55EE0C /* Persistence */ = {
+			isa = PBXGroup;
+			children = (
+				EE11AA22BB33CC44DD55EE07 /* FortuneRecord.swift */,
+				EE11AA22BB33CC44DD55EE09 /* SubscriptionSnapshot.swift */,
+				EE11AA22BB33CC44DD55EE05 /* UserProfile.swift */,
+			);
+			name = Persistence;
+			path = Persistence;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -350,6 +383,11 @@
 				BB22CC33DD44EE55FF66AA78 /* ShareSheet.swift in Sources */,
 				CC33DD44EE55FF66AA77BB89 /* SettingsView.swift in Sources */,
 				DD44EE55FF66AA77BB88CC9A /* SettingsViewModel.swift in Sources */,
+				EE11AA22BB33CC44DD55EE02 /* FortuneTextGenerator.swift in Sources */,
+				EE11AA22BB33CC44DD55EE04 /* LocalFortuneGenerator.swift in Sources */,
+				EE11AA22BB33CC44DD55EE06 /* UserProfile.swift in Sources */,
+				EE11AA22BB33CC44DD55EE08 /* FortuneRecord.swift in Sources */,
+				EE11AA22BB33CC44DD55EE0A /* SubscriptionSnapshot.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

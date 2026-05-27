@@ -56,7 +56,7 @@
 "home.notification.failed.title" = "通知の準備に失敗しました";
 "home.notification.failed.message" = "通信状態や端末設定を確認して、もう一度お試しください。";
 
-// MARK: - 通知
+// MARK: - 通知（毎日）
 "notification.daily.title" = "今日の式神ひとこと";
 "notification.daily.defaultShikigami" = "式神";
 "notification.daily.body.format" = "%@より。%@";
@@ -66,6 +66,18 @@
 "notification.daily.word.3" = "小さな約束を守るほど運は強まる。";
 "notification.daily.word.4" = "今日は言葉を選べ。福はそこに宿る。";
 "notification.daily.word.5" = "身の回りを清めれば、気も澄みゆく。";
+
+// MARK: - 通知（週次 / 毎週月曜）
+"notification.weekly.title" = "今週の天命";
+"notification.weekly.body" = "式神が今週の流れを告げる。鑑定を受けて、運命に備えよ。";
+
+// MARK: - 通知（月次 / 毎月 1 日）
+"notification.monthly.title" = "今月の占いカレンダー";
+"notification.monthly.body" = "新しい月が始まった。式神に今月の天命を問うてみよ。";
+
+// MARK: - 通知（誕生日）
+"notification.birthday.title" = "誕生日特別鑑定";
+"notification.birthday.body" = "汝の生誕の日。式神が特別の天命を告げんとしておる。";
 
 // MARK: - キャラクター
 "character.seimei.name" = "安倍晴明";

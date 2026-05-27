@@ -16,22 +16,21 @@ final class FortuneViewModel {
     private let userRepo: UserRepository
     private let userId: UUID
     // 鑑定結果をローカル保存するクロージャ (docs/design.md §4 FortuneRecord)
-    private let saveRecord: ((FortuneRecord) -> Void)?
+    // FortuneInputView が modelContext 確定後に差し込む
+    var saveRecord: ((FortuneRecord) -> Void)?
 
     init(
         engine: FortuneEngine,
         topic: Topic,
         userId: UUID,
         claudeClient: ClaudeClient,
-        userRepo: UserRepository,
-        saveRecord: ((FortuneRecord) -> Void)? = nil
+        userRepo: UserRepository
     ) {
         self.engine = engine
         self.selectedTopic = topic
         self.userId = userId
         self.claudeClient = claudeClient
         self.userRepo = userRepo
-        self.saveRecord = saveRecord
     }
 
     var canGenerate: Bool {
