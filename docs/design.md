@@ -42,17 +42,34 @@ final class SubscriptionSnapshot {
 
 ## キャッシュ
 
+`LocalFortuneGenerator` はプロフィール要素と履歴補正を利用して文章を生成するため、キャッシュキーにも同一入力を含める。
+
 ```text
 SHA256(
   localUserId +
   engine +
   topic +
   normalize(question) +
+  shikigamiId +
+  gogyo +
+  scoreBand +
+  historySummaryHash +
   dateJst
 )
 ```
 
-同一キーが存在する場合は再生成せずローカルキャッシュを返す。
+### キャッシュキー要素
+
+| 要素 | 理由 |
+|---|---|
+| shikigamiId | 式神別文が変化するため |
+| gogyo | 五行別補正文が変化するため |
+| scoreBand | スコア帯別文が変化するため |
+| historySummaryHash | 履歴補正文が変化するため |
+| dateJst | 今日の運勢を日次更新するため |
+
+同一キーが存在する場合のみローカルキャッシュを返す。
+履歴追加によって `historySummaryHash` が変化した場合は再生成される。
 
 ## 鑑定生成
 
