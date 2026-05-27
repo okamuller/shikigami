@@ -11,7 +11,7 @@ struct HomeView: View {
     init(deps: AppDependencies, user: AppUser) {
         self.deps = deps
         self.user = user
-        _vm = State(initialValue: HomeViewModel(fortuneRepo: deps.fortuneRepo))
+        _vm = State(initialValue: HomeViewModel(user: user, fortuneRepo: deps.fortuneRepo))
     }
 
     var body: some View {
@@ -21,6 +21,7 @@ struct HomeView: View {
             ScrollView {
                 VStack(spacing: 32) {
                     headerSection
+                    notificationSection
                     characterSection
                     historySection
                 }
@@ -54,6 +55,18 @@ struct HomeView: View {
             }
         }
         .fadeInUp()
+    }
+
+    // MARK: - 通知案内
+
+    @ViewBuilder
+    private var notificationSection: some View {
+        if vm.dailyNotificationStatus.showsCard {
+            DailyNotificationCard(status: vm.dailyNotificationStatus) {
+                Task { await vm.enableDailyNotification() }
+            }
+            .fadeInUp()
+        }
     }
 
     // MARK: - キャラクターカード
@@ -114,6 +127,80 @@ struct FortunePreviewCard: View {
                             .fill(Color.white.opacity(0.04))
                     )
             )
+    }
+}
+
+struct DailyNotificationCard: View {
+    let status: DailyNotificationStatus
+    let action: () -> Void
+
+    private var titleKey: String {
+        switch status {
+        case .denied:
+            return "home.notification.denied.title"
+        case .failed:
+            return "home.notification.failed.title"
+        case .unknown, .needsPermission, .scheduling, .scheduled:
+            return "home.notification.title"
+        }
+    }
+
+    private var messageKey: String {
+        switch status {
+        case .denied:
+            return "home.notification.denied.message"
+        case .failed:
+            return "home.notification.failed.message"
+        case .unknown, .needsPermission, .scheduling, .scheduled:
+            return "home.notification.message"
+        }
+    }
+
+    var body: some View {
+        HStack(spacing: 14) {
+            Image(systemName: "bell.badge.fill")
+                .font(.system(size: 22, weight: .semibold))
+                .foregroundStyle(Color.oracleGold)
+                .frame(width: 36, height: 36)
+
+            VStack(alignment: .leading, spacing: 4) {
+                Text(NSLocalizedString(titleKey, comment: ""))
+                    .shikigamiFont(.label)
+                    .foregroundStyle(Color.oracleGold)
+
+                Text(NSLocalizedString(messageKey, comment: ""))
+                    .shikigamiFont(.label)
+                    .foregroundStyle(Color.white.opacity(0.65))
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 8)
+
+            if status.allowsRequest {
+                Button(action: action) {
+                    Text(NSLocalizedString("home.notification.cta", comment: ""))
+                        .shikigamiFont(.label)
+                        .foregroundStyle(Color.voidBlack)
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background(Color.oracleGold)
+                        .clipShape(RoundedRectangle(cornerRadius: 8))
+                }
+                .buttonStyle(.plain)
+            } else if status == .scheduling {
+                ProgressView()
+                    .tint(.oracleGold)
+            }
+        }
+        .padding(14)
+        .background(
+            RoundedRectangle(cornerRadius: 12)
+                .stroke(Color.oracleGold.opacity(0.25), lineWidth: 1)
+                .background(
+                    RoundedRectangle(cornerRadius: 12)
+                        .fill(Color.white.opacity(0.04))
+                )
+        )
     }
 }
 

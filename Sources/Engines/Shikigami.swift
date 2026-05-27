@@ -37,3 +37,43 @@ public struct Shikigami: Equatable, Sendable {
         return table[index]
     }
 }
+
+/// 毎朝の通知に使う「式神ひとこと」の日替わり選択。
+public struct DailyShikigamiWordSelection: Equatable, Sendable {
+    public let shikigami: Shikigami?
+    public let templateIndex: Int
+
+    public var shikigamiNameJa: String {
+        shikigami?.nameJa ?? "式神"
+    }
+
+    public var shikigamiNameKey: String? {
+        shikigami?.nameKey
+    }
+
+    public var templateLocalizationKey: String {
+        "notification.daily.word.\(templateIndex)"
+    }
+}
+
+public enum DailyShikigamiWordEngine {
+    public static let templateCount = 6
+
+    public static func selection(
+        shikigamiID: Int?,
+        date: Date,
+        calendar: Calendar = Calendar(identifier: .gregorian)
+    ) -> DailyShikigamiWordSelection {
+        let shikigami = shikigamiID.flatMap { id in
+            Shikigami.table.indices.contains(id) ? Shikigami.table[id] : nil
+        }
+        let dayOrdinal = calendar.ordinality(of: .day, in: .era, for: date) ?? 0
+        let seed = dayOrdinal + (shikigami?.id ?? 0)
+        let templateIndex = ((seed % templateCount) + templateCount) % templateCount
+
+        return DailyShikigamiWordSelection(
+            shikigami: shikigami,
+            templateIndex: templateIndex
+        )
+    }
+}

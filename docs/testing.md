@@ -85,6 +85,7 @@ QA はリリースごとに以下のスプレッドシートを更新する（�
 | FR-ON-01 | E2E-01 | 自動 | passed |
 | FR-FT-01 | UT-engineA-01 | 自動 | passed |
 | FR-PY-04 | E2E-02 | 自動 | passed |
+| FR-NT-01 | UT-dailyNotification-01 | 自動 | passed |
 | NFR-PR-01 | MAN-01 | 手動 | passed |
 | ... | ... | ... | ... |
 
