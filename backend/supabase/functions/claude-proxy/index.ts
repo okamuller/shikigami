@@ -26,16 +26,29 @@ interface FortuneRequestBody {
   meishiki: MeishikiPayload;
 }
 
+// docs/design.md §4.1 キャッシュキー仕様準拠
+// scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
+function scoreBandFromScore(score: number): string {
+  if (score <= 69) return "low";
+  if (score <= 84) return "middle";
+  return "high";
+}
+
 async function buildInputHash(
   userId: string,
   engine: string,
-  birthDate: string,
   topic: string,
-  question: string
+  question: string,
+  shikigamiIndex: number,
+  gogyo: string,
+  score: number,
+  historySummary: string
 ): Promise<string> {
   const dateJst = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
   const normalized = question.trim().normalize("NFKC").replace(/\s+/g, " ");
-  const raw = [userId, engine, birthDate, topic, normalized, dateJst].join("|");
+  const scoreBand = scoreBandFromScore(score);
+  const historySummaryHash = await sha256Hex(historySummary);
+  const raw = [userId, engine, topic, normalized, String(shikigamiIndex), gogyo, scoreBand, historySummaryHash, dateJst].join("|");
   return sha256Hex(raw);
 }
 
@@ -124,7 +137,7 @@ Deno.serve(async (req: Request) => {
     .limit(5);
 
   const historySummary = buildHistorySummary(recentFortunes ?? []);
-  const inputHash = await buildInputHash(userId, engine, birthDate, topic, question);
+  const inputHash = await buildInputHash(userId, engine, topic, question, meishiki.shikigami_index, meishiki.gogyo, meishiki.score, historySummary);
 
   const { data: cached } = await serviceClient
     .from("fortunes")

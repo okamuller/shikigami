@@ -53,7 +53,7 @@ final class HomeViewModel {
                 dailyNotificationStatus = .denied
                 return
             }
-            try await notificationScheduler.scheduleDailyWord(shikigamiID: user.shikigamiId)
+            try await scheduleAllNotifications()
             dailyNotificationStatus = .scheduled
         } catch {
             dailyNotificationStatus = .failed
@@ -64,7 +64,7 @@ final class HomeViewModel {
         switch await notificationScheduler.authorizationState() {
         case .authorized:
             do {
-                try await notificationScheduler.scheduleDailyWord(shikigamiID: user.shikigamiId)
+                try await scheduleAllNotifications()
                 dailyNotificationStatus = .scheduled
             } catch {
                 dailyNotificationStatus = .failed
@@ -74,6 +74,14 @@ final class HomeViewModel {
         case .denied:
             dailyNotificationStatus = .denied
         }
+    }
+
+    // .claude/D_screens.md 通知スケジュール全種別を一括登録
+    private func scheduleAllNotifications() async throws {
+        try await notificationScheduler.scheduleDailyWord(shikigamiID: user.shikigamiId)
+        try await notificationScheduler.scheduleWeeklyFortune(shikigamiID: user.shikigamiId)
+        try await notificationScheduler.scheduleMonthlyCalendar(shikigamiID: user.shikigamiId)
+        try await notificationScheduler.scheduleBirthdayNotification(birthDate: user.birthDate, shikigamiID: user.shikigamiId)
     }
 }
 
@@ -113,11 +121,18 @@ enum DailyNotificationAuthorizationState {
 protocol DailyNotificationScheduling {
     func authorizationState() async -> DailyNotificationAuthorizationState
     func requestAuthorization() async throws -> Bool
+    // .claude/D_screens.md プッシュ通知スケジュール準拠
     func scheduleDailyWord(shikigamiID: Int?) async throws
+    func scheduleWeeklyFortune(shikigamiID: Int?) async throws
+    func scheduleMonthlyCalendar(shikigamiID: Int?) async throws
+    func scheduleBirthdayNotification(birthDate: Date?, shikigamiID: Int?) async throws
 }
 
 final class DailyNotificationManager: DailyNotificationScheduling {
     private static let requestIDPrefix = "daily_shikigami_word"
+    private static let weeklyIDPrefix  = "weekly_fortune"
+    private static let monthlyIDPrefix = "monthly_calendar"
+    private static let birthdayIDPrefix = "birthday_fortune"
     private static let scheduledDayCount = 30
 
     private let center: UNUserNotificationCenter
@@ -202,6 +217,98 @@ final class DailyNotificationManager: DailyNotificationScheduling {
         let format = NSLocalizedString("notification.daily.body.format", comment: "")
 
         return String.localizedStringWithFormat(format, shikigamiName, word)
+    }
+
+    // MARK: - 週次通知（毎週月曜）
+
+    func scheduleWeeklyFortune(shikigamiID: Int?) async throws {
+        let pending = await center.pendingNotificationRequests()
+        let ids = pending.map(\.identifier).filter { $0.hasPrefix(Self.weeklyIDPrefix) }
+        center.removePendingNotificationRequests(withIdentifiers: ids)
+
+        for weekOffset in 0..<8 {
+            guard let fireDate = nextMonday(after: .now, offsetWeeks: weekOffset) else { continue }
+            let content = UNMutableNotificationContent()
+            content.title = NSLocalizedString("notification.weekly.title", comment: "")
+            content.body = NSLocalizedString("notification.weekly.body", comment: "")
+            content.sound = .default
+            var dc = calendar.dateComponents([.yearForWeekOfYear, .weekOfYear, .weekday, .hour, .minute], from: fireDate)
+            dc.weekday = 2  // 月曜
+            dc.hour = 8
+            dc.minute = 0
+            dc.timeZone = TimeZone(identifier: "Asia/Tokyo")
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: false)
+            let req = UNNotificationRequest(identifier: "\(Self.weeklyIDPrefix).\(weekOffset)", content: content, trigger: trigger)
+            try await center.add(req)
+        }
+    }
+
+    // MARK: - 月次通知（毎月 1 日）
+
+    func scheduleMonthlyCalendar(shikigamiID: Int?) async throws {
+        let pending = await center.pendingNotificationRequests()
+        let ids = pending.map(\.identifier).filter { $0.hasPrefix(Self.monthlyIDPrefix) }
+        center.removePendingNotificationRequests(withIdentifiers: ids)
+
+        for monthOffset in 0..<3 {
+            guard let fireDate = firstDayOfMonth(from: .now, offset: monthOffset) else { continue }
+            let content = UNMutableNotificationContent()
+            content.title = NSLocalizedString("notification.monthly.title", comment: "")
+            content.body = NSLocalizedString("notification.monthly.body", comment: "")
+            content.sound = .default
+            var dc = calendar.dateComponents([.year, .month], from: fireDate)
+            dc.day = 1
+            dc.hour = 8
+            dc.minute = 0
+            dc.timeZone = TimeZone(identifier: "Asia/Tokyo")
+            let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: false)
+            let req = UNNotificationRequest(identifier: "\(Self.monthlyIDPrefix).\(monthOffset)", content: content, trigger: trigger)
+            try await center.add(req)
+        }
+    }
+
+    // MARK: - 誕生日通知
+
+    func scheduleBirthdayNotification(birthDate: Date?, shikigamiID: Int?) async throws {
+        let pending = await center.pendingNotificationRequests()
+        let ids = pending.map(\.identifier).filter { $0.hasPrefix(Self.birthdayIDPrefix) }
+        center.removePendingNotificationRequests(withIdentifiers: ids)
+
+        guard let birthDate else { return }
+        let bdc = calendar.dateComponents([.month, .day], from: birthDate)
+        guard let month = bdc.month, let day = bdc.day else { return }
+
+        let content = UNMutableNotificationContent()
+        content.title = NSLocalizedString("notification.birthday.title", comment: "")
+        content.body = NSLocalizedString("notification.birthday.body", comment: "")
+        content.sound = .default
+        var dc = DateComponents()
+        dc.month = month
+        dc.day = day
+        dc.hour = 8
+        dc.minute = 0
+        dc.timeZone = TimeZone(identifier: "Asia/Tokyo")
+        // 次の誕生日に一度だけ送る（repeats: true にすると毎年繰り返す）
+        let trigger = UNCalendarNotificationTrigger(dateMatching: dc, repeats: true)
+        let req = UNNotificationRequest(identifier: Self.birthdayIDPrefix, content: content, trigger: trigger)
+        try await center.add(req)
+    }
+
+    // MARK: - ヘルパー
+
+    private func nextMonday(after date: Date, offsetWeeks: Int) -> Date? {
+        var components = DateComponents()
+        components.weekday = 2  // 月曜
+        components.hour = 8
+        components.minute = 0
+        guard let first = calendar.nextDate(after: date, matching: components, matchingPolicy: .nextTime) else { return nil }
+        return calendar.date(byAdding: .weekOfYear, value: offsetWeeks, to: first)
+    }
+
+    private func firstDayOfMonth(from date: Date, offset: Int) -> Date? {
+        guard let monthStart = calendar.date(from: calendar.dateComponents([.year, .month], from: date)),
+              let offsetDate = calendar.date(byAdding: .month, value: offset, to: monthStart) else { return nil }
+        return calendar.date(bySetting: .day, value: 1, of: offsetDate)
     }
 
     private func upcomingFireDates(from now: Date) -> [Date] {

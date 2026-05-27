@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 @main
 struct ShikigamiApp: App {
@@ -8,5 +9,6 @@ struct ShikigamiApp: App {
         WindowGroup {
             RootView(deps: deps)
         }
+        .modelContainer(for: [UserProfile.self, FortuneRecord.self, SubscriptionSnapshot.self])
     }
 }
