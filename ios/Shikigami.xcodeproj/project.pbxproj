@@ -51,6 +51,8 @@
 		F271BDE23CF0263F078B9069 /* Shikigami.swift in Sources */ = {isa = PBXBuildFile; fileRef = D3478A076FB1C1676365458C /* Shikigami.swift */; };
 		FD899649B281FFFFD29A58D5 /* UserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8AE77AC883C30E68B14F79E4 /* UserRepository.swift */; };
 		FE148EE2619BD50E7D666F68 /* WelcomeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611916F354229AE090B7674F /* WelcomeStep.swift */; };
+		AA11BB22CC33DD44EE55FF67 /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF66 /* ShareCardView.swift */; };
+		BB22CC33DD44EE55FF66AA78 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -102,6 +104,8 @@
 		FB837FB232C81794C1F7B874 /* FortuneInputView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneInputView.swift; path = Features/Fortune/FortuneInputView.swift; sourceTree = "<group>"; };
 		FD3DE23E0C177C5971C1B287 /* PhysiognomyInputView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = PhysiognomyInputView.swift; path = Features/Physiognomy/PhysiognomyInputView.swift; sourceTree = "<group>"; };
 		FF604F7514D2286EC11C1C70 /* SupabaseConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SupabaseConfig.swift; path = Network/SupabaseConfig.swift; sourceTree = "<group>"; };
+		AA11BB22CC33DD44EE55FF66 /* ShareCardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShareCardView.swift; path = Features/Fortune/ShareCardView.swift; sourceTree = "<group>"; };
+		BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShareSheet.swift; path = Features/Fortune/ShareSheet.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -185,6 +189,8 @@
 				FB837FB232C81794C1F7B874 /* FortuneInputView.swift */,
 				52EE0C11753F66DED796B188 /* FortuneResultView.swift */,
 				1349511FCCF7B769543EA774 /* FortuneViewModel.swift */,
+				AA11BB22CC33DD44EE55FF66 /* ShareCardView.swift */,
+				BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */,
 				B3EDF1F229EDD5EC2EF8ED4D /* HomeView.swift */,
 				040EAC3741828077C7CD012D /* HomeViewModel.swift */,
 				E31C8AFE83A8CB49E661B7BC /* OnboardingFlow.swift */,
@@ -334,6 +340,8 @@
 				07AD5B0CFCA09AB4DC988B64 /* PhysiognomyEngine.swift in Sources */,
 				92177B77ABB3966314FA4478 /* SeimeiEngine.swift in Sources */,
 				F271BDE23CF0263F078B9069 /* Shikigami.swift in Sources */,
+				AA11BB22CC33DD44EE55FF67 /* ShareCardView.swift in Sources */,
+				BB22CC33DD44EE55FF66AA78 /* ShareSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

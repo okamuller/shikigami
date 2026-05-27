@@ -68,6 +68,14 @@ struct ShareCardView: View {
                         .font(.custom("YuMincho-Medium", size: 28))
                         .tracking(8)
                         .foregroundStyle(Color.oracleGold.opacity(0.55))
+
+                    // security.md §4.4 鑑定結果のシェア時にも責任表記を含める
+                    Text("本鑑定は参考情報であり、結果を保証するものではありません。")
+                        .font(.custom("HiraMinProN-W3", size: 16))
+                        .tracking(1)
+                        .foregroundStyle(Color.white.opacity(0.35))
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal, 100)
                 }
                 .padding(.bottom, 80)
             }
