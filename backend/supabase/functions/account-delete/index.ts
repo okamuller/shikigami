@@ -25,10 +25,13 @@ Deno.serve(async (req: Request) => {
   const rcKey = Deno.env.get("REVENUECAT_SECRET_KEY");
   if (rcKey) {
     try {
-      await fetch(`https://api.revenuecat.com/v1/subscribers/${user.id}`, {
+      const rcRes = await fetch(`https://api.revenuecat.com/v1/subscribers/${user.id}`, {
         method: "DELETE",
         headers: { "Authorization": `Bearer ${rcKey}` },
       });
+      if (!rcRes.ok) {
+        console.warn(`RevenueCat deletion returned ${rcRes.status} for user ${user.id}`);
+      }
     } catch {
       console.warn("RevenueCat deletion skipped (non-fatal)");
     }
