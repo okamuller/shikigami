@@ -25,8 +25,8 @@ final class SettingsViewModel {
         isDeleting = true
         defer { isDeleting = false }
         do {
-            await RevenueCatManager.shared.logOut()
             try await userRepo.deleteAccount()
+            await RevenueCatManager.shared.logOut()
             try? await authClient.signOut()
             onDeleted()
         } catch {

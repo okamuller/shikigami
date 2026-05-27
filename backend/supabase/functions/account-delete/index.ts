@@ -5,6 +5,10 @@ Deno.serve(async (req: Request) => {
   const corsResponse = handleCors(req);
   if (corsResponse) return corsResponse;
 
+  if (req.method !== "DELETE") {
+    return Response.json({ error: "method_not_allowed" }, { status: 405, headers: corsHeaders });
+  }
+
   const jwt = req.headers.get("Authorization")?.replace("Bearer ", "");
   if (!jwt) {
     return Response.json({ error: "unauthorized" }, { status: 401, headers: corsHeaders });
