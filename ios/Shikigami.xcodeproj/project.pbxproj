@@ -53,6 +53,8 @@
 		FE148EE2619BD50E7D666F68 /* WelcomeStep.swift in Sources */ = {isa = PBXBuildFile; fileRef = 611916F354229AE090B7674F /* WelcomeStep.swift */; };
 		AA11BB22CC33DD44EE55FF67 /* ShareCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AA11BB22CC33DD44EE55FF66 /* ShareCardView.swift */; };
 		BB22CC33DD44EE55FF66AA78 /* ShareSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */; };
+		CC33DD44EE55FF66AA77BB89 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CC33DD44EE55FF66AA77BB88 /* SettingsView.swift */; };
+		DD44EE55FF66AA77BB88CC9A /* SettingsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = DD44EE55FF66AA77BB88CC99 /* SettingsViewModel.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -106,6 +108,8 @@
 		FF604F7514D2286EC11C1C70 /* SupabaseConfig.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SupabaseConfig.swift; path = Network/SupabaseConfig.swift; sourceTree = "<group>"; };
 		AA11BB22CC33DD44EE55FF66 /* ShareCardView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShareCardView.swift; path = Features/Fortune/ShareCardView.swift; sourceTree = "<group>"; };
 		BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ShareSheet.swift; path = Features/Fortune/ShareSheet.swift; sourceTree = "<group>"; };
+		CC33DD44EE55FF66AA77BB88 /* SettingsView.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsView.swift; path = Features/Settings/SettingsView.swift; sourceTree = "<group>"; };
+		DD44EE55FF66AA77BB88CC99 /* SettingsViewModel.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SettingsViewModel.swift; path = Features/Settings/SettingsViewModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -191,6 +195,8 @@
 				1349511FCCF7B769543EA774 /* FortuneViewModel.swift */,
 				AA11BB22CC33DD44EE55FF66 /* ShareCardView.swift */,
 				BB22CC33DD44EE55FF66AA77 /* ShareSheet.swift */,
+				CC33DD44EE55FF66AA77BB88 /* SettingsView.swift */,
+				DD44EE55FF66AA77BB88CC99 /* SettingsViewModel.swift */,
 				B3EDF1F229EDD5EC2EF8ED4D /* HomeView.swift */,
 				040EAC3741828077C7CD012D /* HomeViewModel.swift */,
 				E31C8AFE83A8CB49E661B7BC /* OnboardingFlow.swift */,
@@ -342,6 +348,8 @@
 				F271BDE23CF0263F078B9069 /* Shikigami.swift in Sources */,
 				AA11BB22CC33DD44EE55FF67 /* ShareCardView.swift in Sources */,
 				BB22CC33DD44EE55FF66AA78 /* ShareSheet.swift in Sources */,
+				CC33DD44EE55FF66AA77BB89 /* SettingsView.swift in Sources */,
+				DD44EE55FF66AA77BB88CC9A /* SettingsViewModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -17,7 +17,7 @@ struct RootView: View {
                     route = .main(user)
                 })
             case .main(let user):
-                MainTabView(deps: deps, user: user)
+                MainTabView(deps: deps, user: user, onDeleted: { route = .onboarding })
             }
         }
         .task {
@@ -40,6 +40,7 @@ struct RootView: View {
 struct MainTabView: View {
     let deps: AppDependencies
     let user: AppUser
+    let onDeleted: () -> Void
 
     var body: some View {
         TabView {
@@ -51,6 +52,11 @@ struct MainTabView: View {
             PhysiognomyInputView()
                 .tabItem {
                     Label(NSLocalizedString("tab.physiognomy", comment: ""), systemImage: "face.smiling")
+                }
+
+            SettingsView(deps: deps, onDeleted: onDeleted)
+                .tabItem {
+                    Label(NSLocalizedString("tab.settings", comment: ""), systemImage: "gearshape.fill")
                 }
         }
         .tint(.oracleGold)

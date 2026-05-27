@@ -69,6 +69,12 @@ final class RevenueCatManager: Sendable {
 #endif
     }
 
+    func logOut() async {
+#if canImport(RevenueCat)
+        _ = try? await Purchases.shared.logOut()
+#endif
+    }
+
     func restorePurchases() async throws -> SubscriptionTier {
 #if canImport(RevenueCat)
         let info = try await Purchases.shared.restorePurchases()
