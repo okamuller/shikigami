@@ -115,6 +115,7 @@ struct FortuneInputView: View {
             if let fortune = vm.fortune {
                 FortuneResultView(
                     fortune: fortune,
+                    engine: engine,
                     deps: deps,
                     tier: .free
                 )

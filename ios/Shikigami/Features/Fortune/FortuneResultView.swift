@@ -2,11 +2,14 @@ import SwiftUI
 
 struct FortuneResultView: View {
     let fortune: Fortune
+    let engine: FortuneEngine
     let deps: AppDependencies
     let tier: SubscriptionTier
 
     @State private var displayedChars = 0
     @State private var showPaywall = false
+    @State private var shareImage: UIImage?
+    @State private var showShareSheet = false
     @Environment(\.dismiss) private var dismiss
 
     private var fullText: String { fortune.text }
@@ -18,6 +21,11 @@ struct FortuneResultView: View {
             VStack(spacing: 0) {
                 // ヘッダー
                 HStack {
+                    Button(action: renderAndShare) {
+                        Image(systemName: "square.and.arrow.up")
+                            .foregroundStyle(Color.oracleGold.opacity(0.8))
+                            .font(.system(size: 20))
+                    }
                     Spacer()
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark.circle.fill")
@@ -78,6 +86,19 @@ struct FortuneResultView: View {
         .sheet(isPresented: $showPaywall) {
             PaywallView(partialText: String(fullText.suffix(40)))
         }
+        .sheet(isPresented: $showShareSheet) {
+            if let img = shareImage {
+                ShareSheet(items: [img])
+            }
+        }
+    }
+
+    private func renderAndShare() {
+        let card = ShareCardView(fortune: fortune, engine: engine)
+        let renderer = ImageRenderer(content: card)
+        renderer.scale = UIScreen.main.scale
+        shareImage = renderer.uiImage
+        showShareSheet = true
     }
 }
 
