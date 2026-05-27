@@ -4,16 +4,18 @@ struct FortuneInputView: View {
     let deps: AppDependencies
     let user: AppUser
     let engine: FortuneEngine
+    let tier: SubscriptionTier
 
     @State private var vm: FortuneViewModel
     @Environment(\.dismiss) private var dismiss
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
-    init(deps: AppDependencies, user: AppUser, engine: FortuneEngine) {
+    init(deps: AppDependencies, user: AppUser, engine: FortuneEngine, tier: SubscriptionTier) {
         self.deps = deps
         self.user = user
         self.engine = engine
+        self.tier = tier
         _vm = State(initialValue: FortuneViewModel(
             engine: engine,
             topic: .destiny,
@@ -116,7 +118,7 @@ struct FortuneInputView: View {
                 FortuneResultView(
                     fortune: fortune,
                     deps: deps,
-                    tier: .free
+                    tier: tier
                 )
             }
         }

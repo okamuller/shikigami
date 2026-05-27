@@ -32,7 +32,7 @@ struct HomeView: View {
         }
         .task { await vm.onAppear() }
         .sheet(isPresented: $showFortuneInput) {
-            FortuneInputView(deps: deps, user: user, engine: selectedEngine)
+            FortuneInputView(deps: deps, user: user, engine: selectedEngine, tier: vm.tier)
         }
     }
 
