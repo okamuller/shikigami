@@ -33,6 +33,10 @@ final class SettingsViewModel {
             center.removePendingNotificationRequests(withIdentifiers: dailyIDs)
 
             try await userRepo.deleteAccount()
+            // 命式キャッシュを UserDefaults から削除（OnboardingViewModel.saveMeishiki と同じキー）
+            if let userId = authClient.currentSession?.userId {
+                UserDefaults.standard.removeObject(forKey: "meishiki_\(userId)")
+            }
             await RevenueCatManager.shared.logOut()
             try? await authClient.signOut()
             onDeleted()
