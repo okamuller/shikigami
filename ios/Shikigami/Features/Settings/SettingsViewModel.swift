@@ -26,13 +26,12 @@ final class SettingsViewModel {
         isDeleting = true
         defer { isDeleting = false }
         do {
-            // 削除前にスケジュール済みのローカル通知をキャンセル
+            try await userRepo.deleteAccount()
+            // サーバ側削除成功後にローカルデータをクリア
             let center = UNUserNotificationCenter.current()
             let pending = await center.pendingNotificationRequests()
             let dailyIDs = pending.map(\.identifier).filter { $0.hasPrefix("daily_shikigami_word") }
             center.removePendingNotificationRequests(withIdentifiers: dailyIDs)
-
-            try await userRepo.deleteAccount()
             // 命式キャッシュを UserDefaults から削除（OnboardingViewModel.saveMeishiki と同じキー）
             if let userId = authClient.currentSession?.userId {
                 UserDefaults.standard.removeObject(forKey: "meishiki_\(userId)")
