@@ -128,7 +128,24 @@ Deno.serve(async (req: Request) => {
     return Response.json({ error: "quota_exceeded" }, { status: 402, headers: corsHeaders });
   }
 
-  // 6. Build personal memory summary and cache key
+  // 6. Build cache key using only pre-today history (stable within a day)
+  // Including today's results would change historySummaryHash after each generation,
+  // causing cache misses for identical same-day repeated requests.
+  const dateJst = new Date().toLocaleDateString("sv-SE", { timeZone: "Asia/Tokyo" });
+  const todayJstIso = `${dateJst}T00:00:00+09:00`;
+
+  const { data: stableHistory } = await serviceClient
+    .from("fortunes")
+    .select("topic, response")
+    .eq("user_id", userId)
+    .lt("created_at", todayJstIso)
+    .order("created_at", { ascending: false })
+    .limit(5);
+
+  const stableHistorySummary = buildHistorySummary(stableHistory ?? []);
+  const inputHash = await buildInputHash(userId, engine, topic, question, meishiki.shikigami_index, meishiki.gogyo, meishiki.score, stableHistorySummary);
+
+  // Fetch all recent history (incl. today) for the AI prompt context
   const { data: recentFortunes } = await serviceClient
     .from("fortunes")
     .select("topic, response")
@@ -137,7 +154,6 @@ Deno.serve(async (req: Request) => {
     .limit(5);
 
   const historySummary = buildHistorySummary(recentFortunes ?? []);
-  const inputHash = await buildInputHash(userId, engine, topic, question, meishiki.shikigami_index, meishiki.gogyo, meishiki.score, historySummary);
 
   const { data: cached } = await serviceClient
     .from("fortunes")
