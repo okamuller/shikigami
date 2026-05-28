@@ -94,4 +94,10 @@ app_target.build_configurations.each do |config|
 end
 
 project.save
+
+scheme = Xcodeproj::XCScheme.new
+scheme.add_build_target(app_target)
+scheme.set_launch_target(app_target)
+scheme.save_as(PROJECT_PATH, "Shikigami", true)
+
 puts "Generated #{PROJECT_PATH}"
