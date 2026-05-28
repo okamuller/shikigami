@@ -59,7 +59,18 @@ final class SupabaseClaudeClient: ClaudeClient, Sendable {
         let encoder = JSONEncoder()
         urlRequest.httpBody = try encoder.encode(request)
 
-        return try await performWithRetry(urlRequest: urlRequest)
+        do {
+            return try await performWithRetry(urlRequest: urlRequest)
+        } catch FortuneError.quotaExceeded {
+            throw FortuneError.quotaExceeded
+        } catch FortuneError.unauthorized {
+            throw FortuneError.unauthorized
+        } catch FortuneError.claudeUnavailable(let text) {
+            throw FortuneError.claudeUnavailable(fallbackText: text)
+        } catch {
+            // ネットワーク不通・API 障害 → ローカルテンプレート生成にフォールバック (LF-GEN-01)
+            return try await LocalFortuneGenerator().generate(request: request)
+        }
     }
 
     // 指数バックオフリトライ（1/2/4/8 秒、最大4回）

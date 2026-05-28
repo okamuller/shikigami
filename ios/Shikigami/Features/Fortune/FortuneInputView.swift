@@ -1,4 +1,5 @@
 import SwiftUI
+import SwiftData
 
 struct FortuneInputView: View {
     let deps: AppDependencies
@@ -7,6 +8,7 @@ struct FortuneInputView: View {
 
     @State private var vm: FortuneViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
 
     private let columns = [GridItem(.flexible()), GridItem(.flexible())]
 
@@ -14,6 +16,7 @@ struct FortuneInputView: View {
         self.deps = deps
         self.user = user
         self.engine = engine
+        // saveRecord は onAppear で modelContext が確定してから差し替える
         _vm = State(initialValue: FortuneViewModel(
             engine: engine,
             topic: .destiny,
@@ -106,6 +109,20 @@ struct FortuneInputView: View {
                     }
                 }
                 .padding(.bottom, 32)
+            }
+        }
+        // modelContext が確定した時点でクロージャを差し込む
+        .task {
+            vm.saveRecord = { [modelContext] record in
+                modelContext.insert(record)
+            }
+            vm.fetchRecord = { [modelContext] hash in
+                let todayStart = Calendar.current.startOfDay(for: Date())
+                var descriptor = FetchDescriptor<FortuneRecord>(
+                    predicate: #Predicate { $0.inputHash == hash && $0.createdAt >= todayStart }
+                )
+                descriptor.fetchLimit = 1
+                return try? modelContext.fetch(descriptor).first
             }
         }
         .sheet(isPresented: Binding(
