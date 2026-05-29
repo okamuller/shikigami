@@ -1,4 +1,5 @@
 import Foundation
+import SwiftData
 
 // 全具体実装を組み立てる DI コンテナ
 // テスト時はスタブに差し替える
@@ -8,19 +9,14 @@ struct AppDependencies {
     let userRepo: UserRepository
     let fortuneRepo: FortuneRepository
 
-    static func live() -> AppDependencies {
-        let auth = SupabaseAuthClient()
-        let base = SupabaseConfig.url
-
-        let jwtProvider: @Sendable () async throws -> String = {
-            try await auth.currentJWT()
-        }
-
+    // local-first: ModelContainer を共有し LocalUserRepository / LocalFortuneRepository を注入する
+    static func live(modelContainer: ModelContainer) -> AppDependencies {
+        let context = ModelContext(modelContainer)
         return AppDependencies(
-            claudeClient: SupabaseClaudeClient(baseURL: base, jwtProvider: jwtProvider),
-            authClient: auth,
-            userRepo: SupabaseUserRepository(baseURL: base, jwtProvider: jwtProvider),
-            fortuneRepo: SupabaseFortuneRepository(baseURL: base, jwtProvider: jwtProvider)
+            claudeClient: LocalFortuneGenerator(),
+            authClient: SupabaseAuthClient(),
+            userRepo: LocalUserRepository(context: context),
+            fortuneRepo: LocalFortuneRepository(context: context)
         )
     }
 

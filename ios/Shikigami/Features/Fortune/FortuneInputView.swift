@@ -124,6 +124,14 @@ struct FortuneInputView: View {
                 descriptor.fetchLimit = 1
                 return try? modelContext.fetch(descriptor).first
             }
+            // FR-EN-04: 直近 5 件の履歴を buildLocalHash に渡す
+            vm.fetchRecentRecords = { [modelContext] in
+                var descriptor = FetchDescriptor<FortuneRecord>(
+                    sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+                )
+                descriptor.fetchLimit = 5
+                return (try? modelContext.fetch(descriptor)) ?? []
+            }
         }
         .sheet(isPresented: Binding(
             get: { vm.fortune != nil },

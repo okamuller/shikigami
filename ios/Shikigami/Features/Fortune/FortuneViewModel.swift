@@ -18,6 +18,8 @@ final class FortuneViewModel {
     // FortuneInputView が modelContext 確定後に差し込む (docs/design.md §4 FortuneRecord)
     var saveRecord: ((FortuneRecord) -> Void)?
     var fetchRecord: ((String) -> FortuneRecord?)?
+    // FR-EN-04: 直近履歴サマリーハッシュ用
+    var fetchRecentRecords: (() -> [FortuneRecord])?
 
     init(
         engine: FortuneEngine,
@@ -130,11 +132,13 @@ final class FortuneViewModel {
 
     // docs/design.md §4.1 ローカルキャッシュキー構築
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
+    // FR-EN-04: 直近 5 件の engine|topic 文字列を historyHash として混入
     private func buildLocalHash(meishiki: MeishikiPayload) -> String {
         let dateJst = Date().formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
         let band = meishiki.score <= 69 ? "low" : meishiki.score <= 84 ? "middle" : "high"
-        let summarySeed = ""  // フォールバック：履歴要約なし（サーバ側で計算済み）
+        let recent = fetchRecentRecords?() ?? []
+        let summarySeed = recent.prefix(5).map { "\($0.engine)|\($0.topic)" }.joined(separator: ",")
         let summaryHash = SHA256.hash(data: Data(summarySeed.utf8)).map { String(format: "%02x", $0) }.joined()
         let raw = [userId.uuidString, engine.rawValue, selectedTopic.rawValue, normalized,
                    String(meishiki.shikigamiIndex), meishiki.gogyo, band, summaryHash, dateJst].joined(separator: "|")
