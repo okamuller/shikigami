@@ -1,5 +1,4 @@
 import SwiftUI
-import AuthenticationServices
 
 struct WelcomeStep: View {
     let vm: OnboardingViewModel
@@ -26,14 +25,9 @@ struct WelcomeStep: View {
             Spacer()
 
             VStack(spacing: 12) {
-                SignInWithAppleButton(.continue) { request in
-                    vm.prepareAppleSignIn(request)
-                } onCompletion: { result in
-                    Task { await vm.handleAppleSignIn(result) }
+                CTAButton(title: NSLocalizedString("welcome.cta", comment: "")) {
+                    vm.advance()
                 }
-                .signInWithAppleButtonStyle(.white)
-                .frame(height: 52)
-                .clipShape(RoundedRectangle(cornerRadius: 8))
                 .disabled(vm.isLoading)
 
                 if let error = vm.error {

@@ -6,9 +6,20 @@ struct FortuneRequest: Encodable {
     let topic: String
     let question: String
     let meishiki: MeishikiPayload
+    // FR-EN-04: LocalFortuneGenerator のテンプレートバリアント選択に使用
+    let historySummaryHash: String
+
+    init(engine: String, topic: String, question: String, meishiki: MeishikiPayload, historySummaryHash: String = "") {
+        self.engine = engine
+        self.topic = topic
+        self.question = question
+        self.meishiki = meishiki
+        self.historySummaryHash = historySummaryHash
+    }
 
     enum CodingKeys: String, CodingKey {
         case engine, topic, question, meishiki
+        case historySummaryHash = "history_summary_hash"
     }
 }
 

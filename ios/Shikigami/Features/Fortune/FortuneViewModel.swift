@@ -18,6 +18,8 @@ final class FortuneViewModel {
     // FortuneInputView が modelContext 確定後に差し込む (docs/design.md §4 FortuneRecord)
     var saveRecord: ((FortuneRecord) -> Void)?
     var fetchRecord: ((String) -> FortuneRecord?)?
+    // FR-EN-04: 直近履歴サマリーハッシュ用
+    var fetchRecentRecords: (() -> [FortuneRecord])?
 
     init(
         engine: FortuneEngine,
@@ -44,7 +46,15 @@ final class FortuneViewModel {
 
         do {
             let meishiki = loadMeishiki()
-            let hash = buildLocalHash(meishiki: meishiki)
+            // FR-EN-04: 直近 5 件から同一 engine+topic を除外してサマリーハッシュを計算する。
+            // 同一 engine+topic を除くことで自己ループを防ぎ、連続リトライでもキャッシュが安定する。
+            // 異なるカテゴリの相談後は historySnapshot が変化し新しいキャッシュキーで再生成される。
+            let historySnapshot = fetchRecentRecords?() ?? []
+            let crossTopicHistory = historySnapshot.filter {
+                $0.engine != engine.rawValue || $0.topic != selectedTopic.rawValue
+            }
+            let summaryHash = buildSummaryHash(from: crossTopicHistory)
+            let hash = buildLocalHash(meishiki: meishiki, summaryHash: summaryHash)
 
             // ローカルキャッシュヒット時は API 呼び出しをスキップ (docs/design.md §4)
             if let cached = fetchRecord?(hash) {
@@ -66,7 +76,8 @@ final class FortuneViewModel {
                 engine: engine.rawValue,
                 topic: selectedTopic.rawValue,
                 question: question,
-                meishiki: meishiki
+                meishiki: meishiki,
+                historySummaryHash: summaryHash
             )
 
             let response = try await claudeClient.generate(request: request)
@@ -128,14 +139,22 @@ final class FortuneViewModel {
         return MeishikiPayload(kanIndex: 0, shiIndex: 0, shikigamiIndex: 0, gogyo: "wood", score: 70)
     }
 
+    // FR-EN-04: 直近履歴 5 件の engine|topic を SHA256 でまとめた履歴サマリーハッシュ
+    private func buildSummaryHash(from records: [FortuneRecord]) -> String {
+        let seed = records.prefix(5).map { "\($0.engine)|\($0.topic)" }.joined(separator: ",")
+        return SHA256.hash(data: Data(seed.utf8)).map { String(format: "%02x", $0) }.joined()
+    }
+
     // docs/design.md §4.1 ローカルキャッシュキー構築
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
-    private func buildLocalHash(meishiki: MeishikiPayload) -> String {
-        let dateJst = Date().formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
+    // summaryHash は同一 engine+topic を除いた cross-topic 履歴から生成される（自己ループ防止）
+    private func buildLocalHash(meishiki: MeishikiPayload, summaryHash: String) -> String {
+        var jstCal = Calendar(identifier: .gregorian)
+        jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+        let c = jstCal.dateComponents([.year, .month, .day], from: Date())
+        let dateJst = String(format: "%04d-%02d-%02d", c.year!, c.month!, c.day!)
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
         let band = meishiki.score <= 69 ? "low" : meishiki.score <= 84 ? "middle" : "high"
-        let summarySeed = ""  // フォールバック：履歴要約なし（サーバ側で計算済み）
-        let summaryHash = SHA256.hash(data: Data(summarySeed.utf8)).map { String(format: "%02x", $0) }.joined()
         let raw = [userId.uuidString, engine.rawValue, selectedTopic.rawValue, normalized,
                    String(meishiki.shikigamiIndex), meishiki.gogyo, band, summaryHash, dateJst].joined(separator: "|")
         return SHA256.hash(data: Data(raw.utf8)).map { String(format: "%02x", $0) }.joined()

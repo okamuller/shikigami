@@ -117,12 +117,23 @@ struct FortuneInputView: View {
                 modelContext.insert(record)
             }
             vm.fetchRecord = { [modelContext] hash in
-                let todayStart = Calendar.current.startOfDay(for: Date())
+                var jstCal = Calendar(identifier: .gregorian)
+                jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+                let todayStart = jstCal.startOfDay(for: Date())
                 var descriptor = FetchDescriptor<FortuneRecord>(
                     predicate: #Predicate { $0.inputHash == hash && $0.createdAt >= todayStart }
                 )
                 descriptor.fetchLimit = 1
                 return try? modelContext.fetch(descriptor).first
+            }
+            // FR-EN-04: 直近 5 件（当日含む）を取得してパーソナライズに使う。
+            // キャッシュキーには含めないため当日レコードを除外せず同日内の変化も反映できる。
+            vm.fetchRecentRecords = { [modelContext] in
+                var descriptor = FetchDescriptor<FortuneRecord>(
+                    sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
+                )
+                descriptor.fetchLimit = 5
+                return (try? modelContext.fetch(descriptor)) ?? []
             }
         }
         .sheet(isPresented: Binding(

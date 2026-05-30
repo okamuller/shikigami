@@ -21,15 +21,10 @@ struct RootView: View {
             }
         }
         .task {
-            // セッションが既にある場合はオンボーディングをスキップ
-            for await session in deps.authClient.sessionStream {
-                if session != nil {
-                    if let user = try? await deps.userRepo.fetchUser(),
-                       user.birthDate != nil {
-                        route = .main(user)
-                    }
-                    return
-                }
+            // local-first: SwiftData に UserProfile が存在すればオンボーディングをスキップ
+            if let user = try? await deps.userRepo.fetchUser(),
+               user.birthDate != nil {
+                route = .main(user)
             }
         }
     }

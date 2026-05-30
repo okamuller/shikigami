@@ -60,6 +60,8 @@
 		EE11AA22BB33CC44DD55EE06 /* UserProfile.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE05 /* UserProfile.swift */; };
 		EE11AA22BB33CC44DD55EE08 /* FortuneRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE07 /* FortuneRecord.swift */; };
 		EE11AA22BB33CC44DD55EE0A /* SubscriptionSnapshot.swift in Sources */ = {isa = PBXBuildFile; fileRef = EE11AA22BB33CC44DD55EE09 /* SubscriptionSnapshot.swift */; };
+		FF11EE22DD33CC44BB55AA02 /* LocalUserRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF11EE22DD33CC44BB55AA01 /* LocalUserRepository.swift */; };
+		FF11EE22DD33CC44BB55AA04 /* LocalFortuneRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = FF11EE22DD33CC44BB55AA03 /* LocalFortuneRepository.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -120,6 +122,8 @@
 		EE11AA22BB33CC44DD55EE05 /* UserProfile.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = UserProfile.swift; path = UserProfile.swift; sourceTree = "<group>"; };
 		EE11AA22BB33CC44DD55EE07 /* FortuneRecord.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = FortuneRecord.swift; path = FortuneRecord.swift; sourceTree = "<group>"; };
 		EE11AA22BB33CC44DD55EE09 /* SubscriptionSnapshot.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = SubscriptionSnapshot.swift; path = SubscriptionSnapshot.swift; sourceTree = "<group>"; };
+		FF11EE22DD33CC44BB55AA01 /* LocalUserRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocalUserRepository.swift; path = LocalUserRepository.swift; sourceTree = "<group>"; };
+		FF11EE22DD33CC44BB55AA03 /* LocalFortuneRepository.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = LocalFortuneRepository.swift; path = LocalFortuneRepository.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -263,6 +267,8 @@
 				EE11AA22BB33CC44DD55EE07 /* FortuneRecord.swift */,
 				EE11AA22BB33CC44DD55EE09 /* SubscriptionSnapshot.swift */,
 				EE11AA22BB33CC44DD55EE05 /* UserProfile.swift */,
+				FF11EE22DD33CC44BB55AA01 /* LocalUserRepository.swift */,
+				FF11EE22DD33CC44BB55AA03 /* LocalFortuneRepository.swift */,
 			);
 			name = Persistence;
 			path = Persistence;
@@ -388,6 +394,8 @@
 				EE11AA22BB33CC44DD55EE06 /* UserProfile.swift in Sources */,
 				EE11AA22BB33CC44DD55EE08 /* FortuneRecord.swift in Sources */,
 				EE11AA22BB33CC44DD55EE0A /* SubscriptionSnapshot.swift in Sources */,
+				FF11EE22DD33CC44BB55AA02 /* LocalUserRepository.swift in Sources */,
+				FF11EE22DD33CC44BB55AA04 /* LocalFortuneRepository.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
