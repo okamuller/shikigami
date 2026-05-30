@@ -46,11 +46,11 @@ final class FortuneViewModel {
 
         do {
             let meishiki = loadMeishiki()
-            // FR-EN-04: fetchRecentRecords は当日より前のレコードのみ返す（FortuneInputView 側で保証）。
-            // 同日内の再リクエストでもハッシュが安定しキャッシュが正しく機能する。
+            // FR-EN-04: 直近 5 件（当日含む）を取得し生成テキストのパーソナライズに使う。
+            // キャッシュキーには含めないため同日リトライでもキャッシュが安定する。
             let historySnapshot = fetchRecentRecords?() ?? []
             let summaryHash = buildSummaryHash(from: historySnapshot)
-            let hash = buildLocalHash(meishiki: meishiki, summaryHash: summaryHash)
+            let hash = buildLocalHash(meishiki: meishiki)
 
             // ローカルキャッシュヒット時は API 呼び出しをスキップ (docs/design.md §4)
             if let cached = fetchRecord?(hash) {
@@ -141,9 +141,11 @@ final class FortuneViewModel {
         return SHA256.hash(data: Data(seed.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 
-    // docs/design.md §4.1 ローカルキャッシュキー構築
+    // docs/design.md §4.1 ローカルキャッシュキー構築（履歴を除く）
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
-    private func buildLocalHash(meishiki: MeishikiPayload, summaryHash: String) -> String {
+    // 履歴はテキスト生成のパーソナライズのみに使い、キャッシュキーには含めない。
+    // これにより同日リトライでキャッシュが安定し、当日履歴も personalization に反映される。
+    private func buildLocalHash(meishiki: MeishikiPayload) -> String {
         var jstCal = Calendar(identifier: .gregorian)
         jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         let c = jstCal.dateComponents([.year, .month, .day], from: Date())
@@ -151,7 +153,7 @@ final class FortuneViewModel {
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
         let band = meishiki.score <= 69 ? "low" : meishiki.score <= 84 ? "middle" : "high"
         let raw = [userId.uuidString, engine.rawValue, selectedTopic.rawValue, normalized,
-                   String(meishiki.shikigamiIndex), meishiki.gogyo, band, summaryHash, dateJst].joined(separator: "|")
+                   String(meishiki.shikigamiIndex), meishiki.gogyo, band, dateJst].joined(separator: "|")
         return SHA256.hash(data: Data(raw.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 }

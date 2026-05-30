@@ -19,7 +19,7 @@ final class LocalFortuneGenerator: ClaudeClient, Sendable {
             id: UUID().uuidString,
             text: text,
             cached: false,
-            isFallback: true,
+            isFallback: false,
             tokensIn: 0,
             tokensOut: 0
         )
