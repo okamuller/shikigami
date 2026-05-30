@@ -17,20 +17,30 @@ final class SupabaseAuthClient {
     private(set) var currentSession: SessionData?
     private var sessionContinuations: [AsyncStream<SessionData?>.Continuation] = []
 #if canImport(Supabase)
-    private let supabase: SupabaseClient
+    private let supabase: SupabaseClient?
     private var authStateTask: Task<Void, Never>?
 
-    init(supabase: SupabaseClient = SupabaseClient(
-        supabaseURL: SupabaseConfig.url,
-        supabaseKey: SupabaseConfig.anonKey
-    )) {
-        self.supabase = supabase
-        if let session = supabase.auth.currentSession {
-            currentSession = Self.sessionData(from: session)
+    // local-first ビルドでは SUPABASE_ANON_KEY が空のため SupabaseClient を生成しない
+    init(supabase: SupabaseClient? = nil) {
+        let client: SupabaseClient?
+        if let supabase {
+            client = supabase
+        } else {
+            let key = SupabaseConfig.anonKey
+            client = key.isEmpty ? nil : SupabaseClient(
+                supabaseURL: SupabaseConfig.url,
+                supabaseKey: key
+            )
         }
-        authStateTask = Task { [weak self] in
-            for await state in supabase.auth.authStateChanges {
-                self?.updateSession(state.session)
+        self.supabase = client
+        if let client {
+            if let session = client.auth.currentSession {
+                currentSession = Self.sessionData(from: session)
+            }
+            authStateTask = Task { [weak self] in
+                for await state in client.auth.authStateChanges {
+                    self?.updateSession(state.session)
+                }
             }
         }
     }
@@ -50,6 +60,12 @@ final class SupabaseAuthClient {
     /// Xcode プロジェクトでは supabase.auth.signInWithIdToken を呼び出す
     func signInWithApple(idToken: String, nonce: String) async throws {
 #if canImport(Supabase)
+        guard let supabase else {
+            let mockSession = SessionData(userId: UUID().uuidString, jwt: idToken)
+            currentSession = mockSession
+            notifySessionChange(mockSession)
+            return
+        }
         let session = try await supabase.auth.signInWithIdToken(
             credentials: .init(provider: .apple, idToken: idToken, nonce: nonce)
         )
@@ -66,7 +82,9 @@ final class SupabaseAuthClient {
 
     func signOut() async throws {
 #if canImport(Supabase)
-        try await supabase.auth.signOut()
+        if let supabase {
+            try await supabase.auth.signOut()
+        }
 #endif
         currentSession = nil
         notifySessionChange(nil)
@@ -83,6 +101,10 @@ final class SupabaseAuthClient {
     /// Edge Function 呼び出し用 JWT を返す
     func currentJWT() async throws -> String {
 #if canImport(Supabase)
+        guard let supabase else {
+            guard let session = currentSession else { throw FortuneError.unauthorized }
+            return session.jwt
+        }
         let session = try await supabase.auth.session
         let sessionData = Self.sessionData(from: session)
         updateSession(sessionData)
