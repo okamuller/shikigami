@@ -3,14 +3,16 @@ import SwiftData
 
 // local-first 版 FortuneRepository。SwiftData の FortuneRecord を読み込む。
 // docs/local-first-migration.md 参照。
-final class LocalFortuneRepository: FortuneRepository, @unchecked Sendable {
-    private let context: ModelContext
+// ModelContext は呼び出しごとに生成し、共有による並行アクセス問題を回避する。
+final class LocalFortuneRepository: FortuneRepository, Sendable {
+    private let container: ModelContainer
 
-    init(context: ModelContext) {
-        self.context = context
+    init(container: ModelContainer) {
+        self.container = container
     }
 
     func fetchHistory(limit: Int) async throws -> [Fortune] {
+        let context = ModelContext(container)
         var descriptor = FetchDescriptor<FortuneRecord>(
             sortBy: [SortDescriptor(\.createdAt, order: .reverse)]
         )

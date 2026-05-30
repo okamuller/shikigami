@@ -3,14 +3,16 @@ import SwiftData
 
 // local-first 版 UserRepository。Supabase を使わず SwiftData の UserProfile を読み書きする。
 // docs/local-first-migration.md 参照。
-final class LocalUserRepository: UserRepository, @unchecked Sendable {
-    private let context: ModelContext
+// ModelContext は呼び出しごとに生成し、共有による並行アクセス問題を回避する。
+final class LocalUserRepository: UserRepository, Sendable {
+    private let container: ModelContainer
 
-    init(context: ModelContext) {
-        self.context = context
+    init(container: ModelContainer) {
+        self.container = container
     }
 
     func fetchUser() async throws -> AppUser {
+        let context = ModelContext(container)
         let profiles = try context.fetch(FetchDescriptor<UserProfile>())
         guard let p = profiles.first else { throw URLError(.zeroByteResource) }
         return AppUser(
@@ -22,6 +24,7 @@ final class LocalUserRepository: UserRepository, @unchecked Sendable {
     }
 
     func upsertUser(_ user: AppUser) async throws {
+        let context = ModelContext(container)
         let profiles = try context.fetch(FetchDescriptor<UserProfile>())
         if let existing = profiles.first {
             if let bd = user.birthDate { existing.birthDate = bd }
@@ -45,6 +48,7 @@ final class LocalUserRepository: UserRepository, @unchecked Sendable {
         }
         UserDefaults.standard.removeObject(forKey: "local_user_id")
 
+        let context = ModelContext(container)
         try context.delete(model: UserProfile.self)
         try context.delete(model: FortuneRecord.self)
         try context.delete(model: SubscriptionSnapshot.self)
