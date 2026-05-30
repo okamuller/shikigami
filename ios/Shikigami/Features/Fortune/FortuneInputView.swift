@@ -117,17 +117,21 @@ struct FortuneInputView: View {
                 modelContext.insert(record)
             }
             vm.fetchRecord = { [modelContext] hash in
-                let todayStart = Calendar.current.startOfDay(for: Date())
+                var jstCal = Calendar(identifier: .gregorian)
+                jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+                let todayStart = jstCal.startOfDay(for: Date())
                 var descriptor = FetchDescriptor<FortuneRecord>(
                     predicate: #Predicate { $0.inputHash == hash && $0.createdAt >= todayStart }
                 )
                 descriptor.fetchLimit = 1
                 return try? modelContext.fetch(descriptor).first
             }
-            // FR-EN-04: 当日より前の直近 5 件を取得。先に絞り込んでから日付フィルタすると
+            // FR-EN-04: 当日より前の直近 5 件を取得（JST 基準）。先に絞り込んでから日付フィルタすると
             // 今日の鑑定が 5 件以上ある場合に結果が空になるため predicate で対応。
             vm.fetchRecentRecords = { [modelContext] in
-                let todayStart = Calendar.current.startOfDay(for: Date())
+                var jstCal = Calendar(identifier: .gregorian)
+                jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+                let todayStart = jstCal.startOfDay(for: Date())
                 var descriptor = FetchDescriptor<FortuneRecord>(
                     predicate: #Predicate { $0.createdAt < todayStart },
                     sortBy: [SortDescriptor(\.createdAt, order: .reverse)]

@@ -144,7 +144,10 @@ final class FortuneViewModel {
     // docs/design.md §4.1 ローカルキャッシュキー構築
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
     private func buildLocalHash(meishiki: MeishikiPayload, summaryHash: String) -> String {
-        let dateJst = Date().formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
+        var jstCal = Calendar(identifier: .gregorian)
+        jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
+        let c = jstCal.dateComponents([.year, .month, .day], from: Date())
+        let dateJst = String(format: "%04d-%02d-%02d", c.year!, c.month!, c.day!)
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
         let band = meishiki.score <= 69 ? "low" : meishiki.score <= 84 ? "middle" : "high"
         let raw = [userId.uuidString, engine.rawValue, selectedTopic.rawValue, normalized,
