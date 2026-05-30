@@ -79,6 +79,14 @@ final class RevenueCatManager: Sendable {
 #endif
     }
 
+    // アカウント削除後の再オンボーディングなど、configure 済みの状態でユーザーを切り替える
+    func logIn(userId: String) async {
+#if canImport(RevenueCat)
+        guard Purchases.isConfigured else { return }
+        _ = try? await Purchases.shared.logIn(userId)
+#endif
+    }
+
     func restorePurchases() async throws -> SubscriptionTier {
 #if canImport(RevenueCat)
         guard Purchases.isConfigured else { return .free }

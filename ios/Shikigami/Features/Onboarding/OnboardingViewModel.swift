@@ -57,11 +57,9 @@ final class OnboardingViewModel {
             shikigamiId: m.shikigamiIndex
         )
 
-        // アカウント削除後の再オンボーディングで新しい UUID が生成された場合も
-        // RevenueCat を正しい appUserID で再設定する
-        if let apiKey = Bundle.main.infoDictionary?["REVENUECAT_PUBLIC_API_KEY"] as? String, !apiKey.isEmpty {
-            RevenueCatManager.shared.configure(apiKey: apiKey, userId: userId.uuidString)
-        }
+        // アカウント削除後の再オンボーディングで新しい UUID が生成された場合に
+        // RevenueCat の appUserID を更新する。SDK は configure 済みのため logIn を使用。
+        await RevenueCatManager.shared.logIn(userId: userId.uuidString)
 
         saveMeishiki(m, for: user.id)
 
