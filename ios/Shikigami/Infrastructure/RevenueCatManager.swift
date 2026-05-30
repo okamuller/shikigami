@@ -23,6 +23,7 @@ final class RevenueCatManager: Sendable {
 
     func fetchTier() async -> SubscriptionTier {
 #if canImport(RevenueCat)
+        guard Purchases.isConfigured else { return .free }
         guard let info = try? await Purchases.shared.customerInfo() else { return .free }
         return mapEntitlement(info)
 #else
@@ -34,6 +35,7 @@ final class RevenueCatManager: Sendable {
 
     func fetchPaywallPlans() async throws -> [PaywallPlan] {
 #if canImport(RevenueCat)
+        guard Purchases.isConfigured else { return PaywallPlan.fallbackPlans }
         let offerings = try await Purchases.shared.offerings()
         guard let offering = offerings.current else { return PaywallPlan.fallbackPlans }
 
@@ -59,6 +61,7 @@ final class RevenueCatManager: Sendable {
 
     func purchase(plan: PaywallPlan) async throws -> SubscriptionTier {
 #if canImport(RevenueCat)
+        guard Purchases.isConfigured else { return .free }
         let offerings = try await Purchases.shared.offerings()
         let package = plan.kind == .annual ? offerings.current?.annual : offerings.current?.monthly
         guard let package else { throw RevenueCatError.packageNotFound }
@@ -71,12 +74,14 @@ final class RevenueCatManager: Sendable {
 
     func logOut() async {
 #if canImport(RevenueCat)
+        guard Purchases.isConfigured else { return }
         _ = try? await Purchases.shared.logOut()
 #endif
     }
 
     func restorePurchases() async throws -> SubscriptionTier {
 #if canImport(RevenueCat)
+        guard Purchases.isConfigured else { return .free }
         let info = try await Purchases.shared.restorePurchases()
         return mapEntitlement(info)
 #else
