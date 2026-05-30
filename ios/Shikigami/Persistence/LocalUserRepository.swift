@@ -39,6 +39,12 @@ final class LocalUserRepository: UserRepository, @unchecked Sendable {
     }
 
     func deleteAccount() async throws {
+        // local-first キーを UserDefaults から削除してから SwiftData を消す
+        if let idStr = UserDefaults.standard.string(forKey: "local_user_id") {
+            UserDefaults.standard.removeObject(forKey: "meishiki_\(idStr)")
+        }
+        UserDefaults.standard.removeObject(forKey: "local_user_id")
+
         try context.delete(model: UserProfile.self)
         try context.delete(model: FortuneRecord.self)
         try context.delete(model: SubscriptionSnapshot.self)
