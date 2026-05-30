@@ -2,18 +2,17 @@ import Foundation
 
 // Supabase 接続情報
 // 値は Config.xcconfig（gitignore 対象）の SUPABASE_URL / SUPABASE_ANON_KEY から読み込む
-// Xcode Build Settings: Info.plist に $(SUPABASE_URL) / $(SUPABASE_ANON_KEY) を追加すること
+// 未設定時はプレースホルダーを返す（local-first ビルドでクラッシュしないよう fatalError を除去）
 enum SupabaseConfig {
     static var url: URL {
-        guard let raw = Bundle.main.infoDictionary?["SUPABASE_URL"] as? String,
-              let url = URL(string: raw)
-        else { fatalError("SUPABASE_URL not configured in Info.plist") }
-        return url
+        if let raw = Bundle.main.infoDictionary?["SUPABASE_URL"] as? String,
+           let url = URL(string: raw) {
+            return url
+        }
+        return URL(string: "https://placeholder.supabase.co")!
     }
 
     static var anonKey: String {
-        guard let key = Bundle.main.infoDictionary?["SUPABASE_ANON_KEY"] as? String
-        else { fatalError("SUPABASE_ANON_KEY not configured in Info.plist") }
-        return key
+        (Bundle.main.infoDictionary?["SUPABASE_ANON_KEY"] as? String) ?? ""
     }
 }
