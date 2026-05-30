@@ -12,7 +12,8 @@ final class LocalFortuneGenerator: ClaudeClient, Sendable {
             topic: request.topic,
             shikigamiIndex: request.meishiki.shikigamiIndex,
             gogyo: request.meishiki.gogyo,
-            score: request.meishiki.score
+            score: request.meishiki.score,
+            historyHash: request.historySummaryHash
         )
         return FortuneResponse(
             id: UUID().uuidString,
@@ -26,9 +27,9 @@ final class LocalFortuneGenerator: ClaudeClient, Sendable {
 
     // MARK: - 生成ロジック
 
-    private func generateText(engine: String, topic: String, shikigamiIndex: Int, gogyo: String, score: Int) -> String {
+    private func generateText(engine: String, topic: String, shikigamiIndex: Int, gogyo: String, score: Int, historyHash: String = "") -> String {
         let si = ((shikigamiIndex % 12) + 12) % 12
-        let variant = dayOrdinalVariant()
+        let variant = textVariant(historyHash: historyHash)
         let band = scoreBand(score)
         let topicIdx = topicIndex(topic)
         let isNanboku = engine == "nanboku"
@@ -38,6 +39,14 @@ final class LocalFortuneGenerator: ClaudeClient, Sendable {
         let closer = isNanboku ? nanbokuCloseLines[band] : seimeiCloseLines[band]
 
         return "\(opener)\n\(middle) \(closer)"
+    }
+
+    // FR-EN-04: 日付パリティと履歴ハッシュの先頭nibble を組み合わせてバリアントを決定する。
+    // historyHash が空の場合は日付パリティのみ使用。
+    private func textVariant(historyHash: String) -> Int {
+        let dayBit = dayOrdinalVariant()
+        guard let firstChar = historyHash.first, let nibble = firstChar.hexDigitValue else { return dayBit }
+        return (dayBit + nibble) % 2
     }
 
     private func dayOrdinalVariant() -> Int {

@@ -49,7 +49,8 @@ final class FortuneViewModel {
             // FR-EN-04: fetchRecentRecords は当日より前のレコードのみ返す（FortuneInputView 側で保証）。
             // 同日内の再リクエストでもハッシュが安定しキャッシュが正しく機能する。
             let historySnapshot = fetchRecentRecords?() ?? []
-            let hash = buildLocalHash(meishiki: meishiki, historySnapshot: historySnapshot)
+            let summaryHash = buildSummaryHash(from: historySnapshot)
+            let hash = buildLocalHash(meishiki: meishiki, summaryHash: summaryHash)
 
             // ローカルキャッシュヒット時は API 呼び出しをスキップ (docs/design.md §4)
             if let cached = fetchRecord?(hash) {
@@ -71,7 +72,8 @@ final class FortuneViewModel {
                 engine: engine.rawValue,
                 topic: selectedTopic.rawValue,
                 question: question,
-                meishiki: meishiki
+                meishiki: meishiki,
+                historySummaryHash: summaryHash
             )
 
             let response = try await claudeClient.generate(request: request)
@@ -133,15 +135,18 @@ final class FortuneViewModel {
         return MeishikiPayload(kanIndex: 0, shiIndex: 0, shikigamiIndex: 0, gogyo: "wood", score: 70)
     }
 
+    // FR-EN-04: 直近履歴 5 件の engine|topic を SHA256 でまとめた履歴サマリーハッシュ
+    private func buildSummaryHash(from records: [FortuneRecord]) -> String {
+        let seed = records.prefix(5).map { "\($0.engine)|\($0.topic)" }.joined(separator: ",")
+        return SHA256.hash(data: Data(seed.utf8)).map { String(format: "%02x", $0) }.joined()
+    }
+
     // docs/design.md §4.1 ローカルキャッシュキー構築
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
-    // FR-EN-04: historySnapshot は当日より前の直近履歴（fetchRecentRecords クロージャ側でフィルタ済み）
-    private func buildLocalHash(meishiki: MeishikiPayload, historySnapshot: [FortuneRecord]) -> String {
+    private func buildLocalHash(meishiki: MeishikiPayload, summaryHash: String) -> String {
         let dateJst = Date().formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
         let band = meishiki.score <= 69 ? "low" : meishiki.score <= 84 ? "middle" : "high"
-        let summarySeed = historySnapshot.prefix(5).map { "\($0.engine)|\($0.topic)" }.joined(separator: ",")
-        let summaryHash = SHA256.hash(data: Data(summarySeed.utf8)).map { String(format: "%02x", $0) }.joined()
         let raw = [userId.uuidString, engine.rawValue, selectedTopic.rawValue, normalized,
                    String(meishiki.shikigamiIndex), meishiki.gogyo, band, summaryHash, dateJst].joined(separator: "|")
         return SHA256.hash(data: Data(raw.utf8)).map { String(format: "%02x", $0) }.joined()
