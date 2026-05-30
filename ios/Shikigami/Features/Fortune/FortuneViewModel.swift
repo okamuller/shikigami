@@ -46,11 +46,15 @@ final class FortuneViewModel {
 
         do {
             let meishiki = loadMeishiki()
-            // FR-EN-04: 直近 5 件（当日含む）を取得し生成テキストのパーソナライズに使う。
-            // キャッシュキーには含めないため同日リトライでもキャッシュが安定する。
+            // FR-EN-04: 直近 5 件から同一 engine+topic を除外してサマリーハッシュを計算する。
+            // 同一 engine+topic を除くことで自己ループを防ぎ、連続リトライでもキャッシュが安定する。
+            // 異なるカテゴリの相談後は historySnapshot が変化し新しいキャッシュキーで再生成される。
             let historySnapshot = fetchRecentRecords?() ?? []
-            let summaryHash = buildSummaryHash(from: historySnapshot)
-            let hash = buildLocalHash(meishiki: meishiki)
+            let crossTopicHistory = historySnapshot.filter {
+                $0.engine != engine.rawValue || $0.topic != selectedTopic.rawValue
+            }
+            let summaryHash = buildSummaryHash(from: crossTopicHistory)
+            let hash = buildLocalHash(meishiki: meishiki, summaryHash: summaryHash)
 
             // ローカルキャッシュヒット時は API 呼び出しをスキップ (docs/design.md §4)
             if let cached = fetchRecord?(hash) {
@@ -141,11 +145,10 @@ final class FortuneViewModel {
         return SHA256.hash(data: Data(seed.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 
-    // docs/design.md §4.1 ローカルキャッシュキー構築（履歴を除く）
+    // docs/design.md §4.1 ローカルキャッシュキー構築
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
-    // 履歴はテキスト生成のパーソナライズのみに使い、キャッシュキーには含めない。
-    // これにより同日リトライでキャッシュが安定し、当日履歴も personalization に反映される。
-    private func buildLocalHash(meishiki: MeishikiPayload) -> String {
+    // summaryHash は同一 engine+topic を除いた cross-topic 履歴から生成される（自己ループ防止）
+    private func buildLocalHash(meishiki: MeishikiPayload, summaryHash: String) -> String {
         var jstCal = Calendar(identifier: .gregorian)
         jstCal.timeZone = TimeZone(identifier: "Asia/Tokyo")!
         let c = jstCal.dateComponents([.year, .month, .day], from: Date())
@@ -153,7 +156,7 @@ final class FortuneViewModel {
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
         let band = meishiki.score <= 69 ? "low" : meishiki.score <= 84 ? "middle" : "high"
         let raw = [userId.uuidString, engine.rawValue, selectedTopic.rawValue, normalized,
-                   String(meishiki.shikigamiIndex), meishiki.gogyo, band, dateJst].joined(separator: "|")
+                   String(meishiki.shikigamiIndex), meishiki.gogyo, band, summaryHash, dateJst].joined(separator: "|")
         return SHA256.hash(data: Data(raw.utf8)).map { String(format: "%02x", $0) }.joined()
     }
 }
