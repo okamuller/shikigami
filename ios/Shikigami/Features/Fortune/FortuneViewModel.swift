@@ -46,9 +46,11 @@ final class FortuneViewModel {
 
         do {
             let meishiki = loadMeishiki()
-            // FR-EN-04: DB 書き込み前に履歴をスナップショット取得。
-            // 保存後に再度呼ぶとハッシュが変わりキャッシュミスになるため、ここで固定する。
-            let historySnapshot = fetchRecentRecords?() ?? []
+            // FR-EN-04: 当日のレコードを除外した履歴でハッシュを計算する。
+            // 当日分を含めると同日内の再リクエストで毎回ハッシュが変わりキャッシュが機能しない。
+            // 日跨ぎの履歴変化は引き続きパーソナライズに反映される。
+            let todayStart = Calendar.current.startOfDay(for: .now)
+            let historySnapshot = (fetchRecentRecords?() ?? []).filter { $0.createdAt < todayStart }
             let hash = buildLocalHash(meishiki: meishiki, historySnapshot: historySnapshot)
 
             // ローカルキャッシュヒット時は API 呼び出しをスキップ (docs/design.md §4)
@@ -135,7 +137,7 @@ final class FortuneViewModel {
 
     // docs/design.md §4.1 ローカルキャッシュキー構築
     // scoreBand: 60-69 → low, 70-84 → middle, 85-99 → high
-    // FR-EN-04: 呼び出し元で DB 書き込み前にスナップショットした historySnapshot を受け取る
+    // FR-EN-04: historySnapshot は当日分を除いた直近履歴（呼び出し元でフィルタ済み）
     private func buildLocalHash(meishiki: MeishikiPayload, historySnapshot: [FortuneRecord]) -> String {
         let dateJst = Date().formatted(.iso8601.year().month().day().timeZone(separator: .omitted))
         let normalized = question.trimmingCharacters(in: .whitespacesAndNewlines)
